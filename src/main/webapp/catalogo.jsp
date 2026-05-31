@@ -205,7 +205,8 @@
             <h2>🔥 I più venduti</h2>
             <div class="catalogo">
                 <div class="prodotto">
-                    <img src="https://gaming-cdn.com/images/products/13588/orig/ea-sports-fc-24-pc-gioco-ea-app-cover.jpg?v=1696842619" alt="FIFA 24">
+                    <img src="https://gaming-cdn.com/images/products/13588/orig/ea-sports-fc-24-pc-gioco-ea-app-cover.jpg?v=1696842619"
+                        alt="FIFA 24">
                     <div class="info">
                         <h3>FIFA 24</h3>
                         <div class="piattaforma">PC / PS5 / Xbox</div>
@@ -214,7 +215,8 @@
                     </div>
                 </div>
                 <div class="prodotto">
-                    <img src="https://gaming-cdn.com/images/products/15070/orig/call-of-duty-modern-warfare-iii-bundle-cross-gen-cross-gen-bundle-xbox-one-xbox-series-x-s-gioco-microsoft-store-cover.jpg?v=1739354531" alt="Call of Duty">
+                    <img src="https://gaming-cdn.com/images/products/15070/orig/call-of-duty-modern-warfare-iii-bundle-cross-gen-cross-gen-bundle-xbox-one-xbox-series-x-s-gioco-microsoft-store-cover.jpg?v=1739354531"
+                        alt="Call of Duty">
                     <div class="info">
                         <h3>Call of Duty: Modern Warfare III</h3>
                         <div class="piattaforma">PC / PS5 / Xbox</div>
@@ -223,7 +225,8 @@
                     </div>
                 </div>
                 <div class="prodotto">
-                    <img src="https://gaming-cdn.com/images/products/186/orig/grand-theft-auto-v-pc-gioco-rockstar-cover.jpg?v=1744367958" alt="GTA V">
+                    <img src="https://gaming-cdn.com/images/products/186/orig/grand-theft-auto-v-pc-gioco-rockstar-cover.jpg?v=1744367958"
+                        alt="GTA V">
                     <div class="info">
                         <h3>Grand Theft Auto V</h3>
                         <div class="piattaforma">PC / PS5 / Xbox</div>
@@ -232,7 +235,8 @@
                     </div>
                 </div>
                 <div class="prodotto">
-                    <img src="https://gaming-cdn.com/images/products/4824/orig/elden-ring-pc-steam-cover.jpg?v=1750231653" alt="Elden Ring">
+                    <img src="https://gaming-cdn.com/images/products/4824/orig/elden-ring-pc-steam-cover.jpg?v=1750231653"
+                        alt="Elden Ring">
                     <div class="info">
                         <h3>Elden Ring</h3>
                         <div class="piattaforma">PC / PS5 / Xbox</div>
