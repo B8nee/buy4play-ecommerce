@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy 4 Play - Catalogo chiavi videogiochi</title>
+    <title>Buy 4 Play - Catalogo</title>
     <style>
         * {
             margin: 0;
@@ -124,6 +124,29 @@
             margin-top: 2rem;
             font-size: 0.9rem;
         }
+        .pagination {
+		    text-align: center;
+		    margin: 2rem 0;
+		}
+		.pagination a, .pagination span {
+		    display: inline-block;
+		    padding: 0.5rem 0.8rem;
+		    margin: 0 0.2rem;
+		    border: 1px solid #ddd;
+		    border-radius: 5px;
+		    text-decoration: none;
+		    color: #333;
+		}
+		.pagination a:hover {
+		    background-color: #e94560;
+		    color: white;
+		    border-color: #e94560;
+		}
+		.pagination span.active {
+		    background-color: #e94560;
+		    color: white;
+		    border-color: #e94560;
+		}
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -184,7 +207,9 @@
         <div class="prodotto">
             <img src="<%= p.getImmagineUrl() %>" alt="<%= p.getNome() %>">
             <div class="info">
-                <h3><%= p.getNome() %></h3>
+                <a href="dettaglio?id=<%= p.getId() %>">
+    				<h3><%= p.getNome() %></h3>
+				</a>
                 <div class="piattaforma"><%= p.getPiattaforma() %></div>
                 <div class="prezzo">€ <%= String.format("%.2f", p.getPrezzo()) %></div>
                 <button class="btn">🛒 Aggiungi al carrello</button>
@@ -197,10 +222,41 @@
         <p>Nessun prodotto disponibile al momento.</p>
         <% } %>
     </div>
+	<div class="pagination">
+	    <%
+	        int currentPage = (Integer) request.getAttribute("currentPage");
+	        int totalPages = (Integer) request.getAttribute("totalPages");
+	        int limit = (Integer) request.getAttribute("limit");
+	        
+	        if (totalPages > 1) {
+	            if (currentPage > 1) {
+	    %>
+	                <a href="catalogo?page=<%= currentPage - 1 %>&limit=<%= limit %>">« Precedente</a>
+	    <%
+	            }
+	            for (int p = 1; p <= totalPages; p++) {
+	                if (p == currentPage) {
+	    %>
+	                    <span class="active"><%= p %></span>
+	    <%
+	                } else {
+	    %>
+	                    <a href="catalogo?page=<%= p %>&limit=<%= limit %>"><%= p %></a>
+	    <%
+	                }
+	            }
+	            if (currentPage < totalPages) {
+	    %>
+	                <a href="catalogo?page=<%= currentPage + 1 %>&limit=<%= limit %>">Successivo »</a>
+	    <%
+	            }
+	        }
+	    %>
+	</div>
 </main>
 
 <footer>
-    <p>&copy; 2025 Buy 4 Play - Tutti i diritti riservati. | Progetto TSW - Università di Salerno</p>
+    <p>&copy; 2026 Buy 4 Play - Tutti i diritti riservati. | Progetto TSW - Università di Salerno</p>
 </footer>
 
 </body>

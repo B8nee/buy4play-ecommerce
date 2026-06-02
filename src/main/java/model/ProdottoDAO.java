@@ -24,22 +24,58 @@ public class ProdottoDAO {
         }
     }
 
-    public List<Prodotto> doRetrieveAll() throws SQLException {
-        List<Prodotto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM prodotto";
+    public List<Prodotto> doRetrieveAll(int offset, int limit) throws SQLException {
+        List<Prodotto> prodotti = new ArrayList<>();
+        String sql = "SELECT * FROM prodotto ORDER BY id LIMIT ? OFFSET ?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Prodotto p = new Prodotto();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setPiattaforma(rs.getString("piattaforma"));
+                    p.setPrezzo(rs.getDouble("prezzo"));
+                    p.setImmagineUrl(rs.getString("immagine_url"));
+                    prodotti.add(p);
+                }
+            }
+        }
+        return prodotti;
+    }
+    
+    public int countProdotti() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM prodotto";
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Prodotto p = new Prodotto();
-                p.setId(rs.getInt("id"));
-                p.setNome(rs.getString("nome"));
-                p.setPiattaforma(rs.getString("piattaforma"));
-                p.setPrezzo(rs.getDouble("prezzo"));
-                p.setImmagineUrl(rs.getString("immagine_url"));
-                lista.add(p);
+            if (rs.next()) {
+                return rs.getInt(1);
             }
         }
-        return lista;
+        return 0;
+    }
+    
+    
+    public Prodotto doRetrieveById(int id) throws SQLException {
+        String sql = "SELECT * FROM prodotto WHERE id = ?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Prodotto p = new Prodotto();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setPiattaforma(rs.getString("piattaforma"));
+                    p.setPrezzo(rs.getDouble("prezzo"));
+                    p.setImmagineUrl(rs.getString("immagine_url"));
+                    return p;
+                }
+            }
+        }
+        return null;
     }
 }
