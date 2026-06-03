@@ -26,7 +26,11 @@
         <h1><%= p.getNome() %></h1>
         <p><strong>Piattaforma:</strong> <%= p.getPiattaforma() %></p>
         <p class="prezzo">€ <%= String.format("%.2f", p.getPrezzo()) %></p>
-        <button>🛒 Aggiungi al carrello</button>
+        <form action="carrello" method="get">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="id" value="<%= p.getId() %>">
+            <button type="submit">🛒 Aggiungi al carrello</button>
+        </form>
         <br><br>
         <a href="catalogo">← Torna al catalogo</a>
     </div>

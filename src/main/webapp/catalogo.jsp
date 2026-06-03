@@ -212,7 +212,11 @@
 				</a>
                 <div class="piattaforma"><%= p.getPiattaforma() %></div>
                 <div class="prezzo">€ <%= String.format("%.2f", p.getPrezzo()) %></div>
-                <button class="btn">🛒 Aggiungi al carrello</button>
+                <form action="carrello" method="get">
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="id" value="<%= p.getId() %>">
+                    <button type="submit" class="btn">🛒 Aggiungi al carrello</button>
+                </form>
             </div>
         </div>
         <%
