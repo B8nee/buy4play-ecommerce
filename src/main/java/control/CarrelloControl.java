@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import model.Carrello;
+import model.Cart;
 import model.Prodotto;
 import model.ProdottoDAO;
 
@@ -17,10 +17,10 @@ public class CarrelloControl extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
-        Carrello carrello = (Carrello) session.getAttribute("carrello");
-        if (carrello == null) {
-            carrello = new Carrello();
-            session.setAttribute("carrello", carrello);
+        Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new Cart();
+            session.setAttribute("cart", cart);
         }
 
         if (action == null) {
@@ -28,48 +28,40 @@ public class CarrelloControl extends HttpServlet {
             return;
         }
 
-        switch (action) {
-            case "add":
-                String idProdotto = request.getParameter("id");
-                if (idProdotto != null) {
-                    try {
-                        int id = Integer.parseInt(idProdotto);
+        try {
+            switch (action) {
+                case "add":
+                    String idParam = request.getParameter("id");
+                    if (idParam != null && !idParam.isEmpty()) {
+                        int id = Integer.parseInt(idParam);
                         ProdottoDAO dao = new ProdottoDAO();
                         Prodotto p = dao.doRetrieveById(id);
-                        if (p != null) {
-                            carrello.addProdotto(p);
-                        }
-                    } catch (Exception e) { e.printStackTrace(); }
-                }
-                String referer = request.getHeader("referer");
-                response.sendRedirect(referer != null ? referer : "catalogo");
-                break;
-
-            case "remove":
-                String removeId = request.getParameter("id");
-                if (removeId != null) {
-                    carrello.removeProdotto(Integer.parseInt(removeId));
-                }
-                response.sendRedirect("carrello");
-                break;
-
-            case "update":
-                String idUpdate = request.getParameter("id");
-                String qty = request.getParameter("quantita");
-                if (idUpdate != null && qty != null) {
-                    carrello.updateQuantita(Integer.parseInt(idUpdate), Integer.parseInt(qty));
-                }
-                response.sendRedirect("carrello");
-                break;
-
-            case "clear":
-                carrello.clear();
-                response.sendRedirect("carrello");
-                break;
-
-            default:
-                response.sendRedirect("catalogo");
+                        if (p != null) cart.addItem(p);
+                    }
+                    break;
+                case "remove":
+                    String removeId = request.getParameter("id");
+                    if (removeId != null && !removeId.isEmpty()) {
+                        cart.removeItem(Integer.parseInt(removeId));
+                    }
+                    break;
+                case "update":
+                    String updateId = request.getParameter("id");
+                    String qty = request.getParameter("qty");
+                    if (updateId != null && !updateId.isEmpty() && qty != null && !qty.isEmpty()) {
+                        cart.updateQuantity(Integer.parseInt(updateId), Integer.parseInt(qty));
+                    }
+                    break;
+                case "clear":
+                    cart.clear();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        response.sendRedirect("carrello");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

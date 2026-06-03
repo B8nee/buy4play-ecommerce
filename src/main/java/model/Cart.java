@@ -2,50 +2,52 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class Carrello {
-    private List<CarrelloItem> items = new ArrayList<>();
+public class Cart {
+    private List<CartItem> items = new ArrayList<>();
 
-    public List<CarrelloItem> getItems() {
+    public List<CartItem> getItems() {
         return items;
     }
 
-    public void addProdotto(Prodotto p) {
-        for (CarrelloItem item : items) {
-            if (item.getProdotto().getId() == p.getId()) {
-                item.setQuantita(item.getQuantita() + 1);
-                return;
-            }
+    public void addItem(Prodotto prodotto) {
+        Optional<CartItem> existing = items.stream()
+                .filter(item -> item.getProdotto().getId() == prodotto.getId())
+                .findFirst();
+        if (existing.isPresent()) {
+            existing.get().setQuantita(existing.get().getQuantita() + 1);
+        } else {
+            items.add(new CartItem(prodotto, 1));
         }
-        items.add(new CarrelloItem(p, 1));
     }
 
-    public void removeProdotto(int idProdotto) {
-        items.removeIf(item -> item.getProdotto().getId() == idProdotto);
+    public void removeItem(int productId) {
+        items.removeIf(item -> item.getProdotto().getId() == productId);
     }
 
-    public void updateQuantita(int idProdotto, int nuovaQuantita) {
-        for (CarrelloItem item : items) {
-            if (item.getProdotto().getId() == idProdotto) {
-                if (nuovaQuantita <= 0) {
-                    removeProdotto(idProdotto);
-                } else {
-                    item.setQuantita(nuovaQuantita);
+    public void updateQuantity(int productId, int quantita) {
+        if (quantita <= 0) {
+            removeItem(productId);
+        } else {
+            for (CartItem item : items) {
+                if (item.getProdotto().getId() == productId) {
+                    item.setQuantita(quantita);
+                    break;
                 }
-                return;
             }
         }
     }
 
-    public double getTotale() {
-        double totale = 0;
-        for (CarrelloItem item : items) {
-            totale += item.getProdotto().getPrezzo() * item.getQuantita();
-        }
-        return totale;
+    public double getTotal() {
+        return items.stream().mapToDouble(CartItem::getSubtotale).sum();
     }
 
     public void clear() {
         items.clear();
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 }

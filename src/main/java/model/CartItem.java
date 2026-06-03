@@ -1,10 +1,10 @@
 package model;
 
-public class CarrelloItem {
+public class CartItem {
     private Prodotto prodotto;
     private int quantita;
 
-    public CarrelloItem(Prodotto prodotto, int quantita) {
+    public CartItem(Prodotto prodotto, int quantita) {
         this.prodotto = prodotto;
         this.quantita = quantita;
     }
@@ -23,5 +23,9 @@ public class CarrelloItem {
 
     public void setQuantita(int quantita) {
         this.quantita = quantita;
+    }
+
+    public double getSubtotale() {
+        return prodotto.getPrezzo() * quantita;
     }
 }
