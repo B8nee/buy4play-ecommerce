@@ -78,4 +78,38 @@ public class ProdottoDAO {
         }
         return null;
     }
+    
+    public void doSave(Prodotto p) throws SQLException {
+        String sql = "INSERT INTO prodotto (nome, piattaforma, prezzo, immagine_url) VALUES (?, ?, ?, ?)";
+        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getPiattaforma());
+            ps.setDouble(3, p.getPrezzo());
+            ps.setString(4, p.getImmagineUrl());
+            ps.executeUpdate();
+        }
+    }
+
+    public void doUpdate(Prodotto p) throws SQLException {
+        String sql = "UPDATE prodotto SET nome=?, piattaforma=?, prezzo=?, immagine_url=? WHERE id=?";
+        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getPiattaforma());
+            ps.setDouble(3, p.getPrezzo());
+            ps.setString(4, p.getImmagineUrl());
+            ps.setInt(5, p.getId());
+            ps.executeUpdate();
+        }
+    }
+
+    public boolean doDelete(int id) throws SQLException {
+        String sql = "DELETE FROM prodotto WHERE id=?";
+        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1451) return false;
+            throw e;
+        }
+    }
 }

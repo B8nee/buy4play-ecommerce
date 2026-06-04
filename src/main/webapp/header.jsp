@@ -71,18 +71,24 @@
         <p>Le migliori chiavi per i tuoi giochi</p>
     </div>
     <nav>
-        <a href="catalogo">Catalogo</a>
-        <a href="carrello">Carrello</a>
-        <% 
-            model.Utente utente = (model.Utente) session.getAttribute("utente");
-            if (utente != null) { 
-        %>
-            <span>Benvenuto, <%= utente.getNome() %></span>
-            <a href="logout">Logout</a>
-        <% } else { %>
-            <a href="login.jsp">Accedi</a>
-            <a href="registrazione.jsp">Registrati</a>
-        <% } %>
-    </nav>
+	    <a href="catalogo">Catalogo</a>
+	    <a href="carrello">Carrello</a>
+	    <% 
+	        model.Utente utente = (model.Utente) session.getAttribute("utente");
+	        if (utente != null) { 
+	    %>
+	        <span>Benvenuto, <%= utente.getNome() %></span>
+	        <a href="profilo">Il mio profilo</a>
+	    <%  
+	    	if (utente != null && "admin".equals(utente.getRuolo())) { 
+	    %>
+    		<a href="admin/index.jsp">Admin</a>
+		<% } %>
+	        <a href="logout">Logout</a>
+	    <% } else { %>
+	        <a href="login.jsp">Accedi</a>
+	        <a href="registrazione.jsp">Registrati</a>
+	    <% } %>
+	</nav>
 </header>
 <div class="container">

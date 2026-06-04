@@ -1,11 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
-<%@ page import="java.util.List, model.DettaglioOrdine" %>
-<h2>Dettaglio ordine #<%= request.getAttribute("ordineId") %></h2>
+<%@ page import="java.util.List, model.DettaglioOrdine, model.Ordine, java.text.SimpleDateFormat" %>
+<%
+    Ordine ordine = (Ordine) request.getAttribute("ordine");
+    if (ordine == null) {
+        response.sendRedirect("ordini");
+        return;
+    }
+    List<DettaglioOrdine> dettagli = (List<DettaglioOrdine>) request.getAttribute("dettagli");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+%>
+<h2>Dettaglio ordine #<%= ordine.getId() %></h2>
+<p><strong>Data ordine:</strong> <%= sdf.format(ordine.getDataOrdine()) %></p>
+<p><strong>Indirizzo di spedizione:</strong> <%= ordine.getIndirizzoSpedizione() != null ? ordine.getIndirizzoSpedizione() : "N/D" %></p>
+
 <table border="1">
     <tr><th>Prodotto</th><th>Quantità</th><th>Prezzo unitario</th><th>IVA</th><th>Totale</th></tr>
 <%
-    List<DettaglioOrdine> dettagli = (List<DettaglioOrdine>) request.getAttribute("dettagli");
     double totaleGenerale = 0.0;
     for (DettaglioOrdine d : dettagli) {
         double prezzoConIva = d.getPrezzoUnitario() * (1 + d.getIva()/100);
@@ -23,7 +34,7 @@
 </table>
 <p><strong>Totale complessivo: &euro; <%= String.format("%.2f", totaleGenerale) %></strong></p>
 
-<a href="FatturaPDFControl?id=<%= request.getAttribute("ordineId") %>" class="btn" target="_blank">📄 Scarica PDF fattura</a>
+<a href="FatturaPDFControl?id=<%= ordine.getId() %>" class="btn" target="_blank">📄 Scarica PDF fattura</a>
 <br><br>
 <a href="ordini">← Torna agli ordini</a>
 <%@ include file="footer.jsp" %>

@@ -75,4 +75,29 @@ public class UtenteDAO {
         }
         return null;
     }
+    
+    public boolean aggiornaUtente(Utente utente) throws SQLException {
+        String sql = "UPDATE utente SET nome=?, cognome=?, indirizzo=?, citta=?, provincia=?, cap=? WHERE id=?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, utente.getNome());
+            ps.setString(2, utente.getCognome());
+            ps.setString(3, utente.getIndirizzo());
+            ps.setString(4, utente.getCitta());
+            ps.setString(5, utente.getProvincia());
+            ps.setString(6, utente.getCap());
+            ps.setInt(7, utente.getId());
+            return ps.executeUpdate() == 1;
+        }
+    }
+    
+    public boolean aggiornaPassword(int utenteId, String newHash) throws SQLException {
+        String sql = "UPDATE utente SET password_hash = ? WHERE id = ?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setInt(2, utenteId);
+            return ps.executeUpdate() == 1;
+        }
+    }
 }

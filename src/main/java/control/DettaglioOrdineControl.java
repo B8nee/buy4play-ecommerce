@@ -18,9 +18,14 @@ public class DettaglioOrdineControl extends HttpServlet {
         int ordineId = Integer.parseInt(idParam);
         OrdineDAO dao = new OrdineDAO();
         try {
+            Ordine ordine = dao.getOrdineById(ordineId);
+            if (ordine == null) {
+                response.sendRedirect("ordini");
+                return;
+            }
             List<DettaglioOrdine> dettagli = dao.getDettagliByOrdine(ordineId);
+            request.setAttribute("ordine", ordine);
             request.setAttribute("dettagli", dettagli);
-            request.setAttribute("ordineId", ordineId);
             request.getRequestDispatcher("/dettaglioOrdine.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

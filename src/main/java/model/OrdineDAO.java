@@ -93,4 +93,47 @@ public class OrdineDAO {
         }
         return dettagli;
     }
+    
+    public Ordine getOrdineById(int ordineId) throws SQLException {
+        String sql = "SELECT * FROM ordine WHERE id = ?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, ordineId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Ordine o = new Ordine();
+                    o.setId(rs.getInt("id"));
+                    o.setUtenteId(rs.getInt("utente_id"));
+                    o.setDataOrdine(rs.getTimestamp("data_ordine"));
+                    o.setTotale(rs.getDouble("totale"));
+                    o.setIndirizzoSpedizione(rs.getString("indirizzo_spedizione"));
+                    return o;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public List<Ordine> getOrdiniConFiltri(String dataInizio, String dataFine, String clienteId) throws SQLException {
+        List<Ordine> ordini = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM ordine WHERE 1=1");
+        if (dataInizio != null && !dataInizio.isEmpty()) sql.append(" AND data_ordine >= '").append(dataInizio).append("'");
+        if (dataFine != null && !dataFine.isEmpty()) sql.append(" AND data_ordine <= '").append(dataFine).append(" 23:59:59'");
+        if (clienteId != null && !clienteId.isEmpty()) sql.append(" AND utente_id = ").append(clienteId);
+        sql.append(" ORDER BY data_ordine DESC");
+        try (Connection conn = ds.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql.toString())) {
+            while (rs.next()) {
+                Ordine o = new Ordine();
+                o.setId(rs.getInt("id"));
+                o.setUtenteId(rs.getInt("utente_id"));
+                o.setDataOrdine(rs.getTimestamp("data_ordine"));
+                o.setTotale(rs.getDouble("totale"));
+                o.setIndirizzoSpedizione(rs.getString("indirizzo_spedizione"));
+                ordini.add(o);
+            }
+        }
+        return ordini;
+    }
 }
