@@ -14,7 +14,8 @@ public class DettaglioOrdineControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
-        if (idParam == null) return;
+        if (idParam == null)
+            return;
         int ordineId = Integer.parseInt(idParam);
         OrdineDAO dao = new OrdineDAO();
         try {

@@ -24,7 +24,8 @@ public class FatturaPDFControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
-        if (idParam == null) return;
+        if (idParam == null)
+            return;
         int ordineId = Integer.parseInt(idParam);
         OrdineDAO dao = new OrdineDAO();
         try {
@@ -61,8 +62,10 @@ public class FatturaPDFControl extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             document.add(new Paragraph("Cliente: " + utente.getNome() + " " + utente.getCognome()));
             document.add(new Paragraph("Email: " + utente.getEmail()));
-            document.add(new Paragraph("Indirizzo: " + (utente.getIndirizzo() != null ? utente.getIndirizzo() : "N/D")));
-            document.add(new Paragraph("Città: " + (utente.getCitta() != null ? utente.getCitta() : "N/D") + " (" + (utente.getProvincia() != null ? utente.getProvincia() : "N/D") + ")"));
+            document.add(
+                    new Paragraph("Indirizzo: " + (utente.getIndirizzo() != null ? utente.getIndirizzo() : "N/D")));
+            document.add(new Paragraph("Città: " + (utente.getCitta() != null ? utente.getCitta() : "N/D") + " ("
+                    + (utente.getProvincia() != null ? utente.getProvincia() : "N/D") + ")"));
             document.add(new Paragraph("CAP: " + (utente.getCap() != null ? utente.getCap() : "N/D")));
             document.add(new Paragraph("Data ordine: " + sdf.format(ordine.getDataOrdine())));
             document.add(new Paragraph(" "));
@@ -72,7 +75,7 @@ public class FatturaPDFControl extends HttpServlet {
             table.setSpacingBefore(10f);
             table.setSpacingAfter(10f);
 
-            String[] headers = {"Prodotto", "Quantità", "Prezzo unitario", "IVA", "Totale"};
+            String[] headers = { "Prodotto", "Quantità", "Prezzo unitario", "IVA", "Totale" };
             for (String h : headers) {
                 PdfPCell cell = new PdfPCell(new Phrase(h, FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -94,7 +97,8 @@ public class FatturaPDFControl extends HttpServlet {
 
             document.add(table);
             document.add(new Paragraph(" "));
-            document.add(new Paragraph("Totale complessivo: " + String.format("%.2f €", totaleComplessivo), FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+            document.add(new Paragraph("Totale complessivo: " + String.format("%.2f €", totaleComplessivo),
+                    FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 
             document.close();
         } catch (Exception e) {

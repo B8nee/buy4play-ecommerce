@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter({"/checkout", "/profilo", "/ordini"})
+@WebFilter({ "/checkout", "/profilo", "/ordini" })
 public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -28,6 +28,9 @@ public class AuthFilter implements Filter {
         }
     }
 
-    public void init(FilterConfig fConfig) throws ServletException {}
-    public void destroy() {}
+    public void init(FilterConfig fConfig) throws ServletException {
+    }
+
+    public void destroy() {
+    }
 }

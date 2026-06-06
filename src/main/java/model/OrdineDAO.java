@@ -23,14 +23,16 @@ public class OrdineDAO {
     public int salvaOrdine(Ordine ordine) throws SQLException {
         String sql = "INSERT INTO ordine (utente_id, totale, indirizzo_spedizione) VALUES (?, ?, ?)";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, ordine.getUtenteId());
             ps.setDouble(2, ordine.getTotale());
             ps.setString(3, ordine.getIndirizzoSpedizione());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
-                else throw new SQLException("Impossibile ottenere ID ordine");
+                if (rs.next())
+                    return rs.getInt(1);
+                else
+                    throw new SQLException("Impossibile ottenere ID ordine");
             }
         }
     }
@@ -38,7 +40,7 @@ public class OrdineDAO {
     public void salvaDettaglio(DettaglioOrdine det) throws SQLException {
         String sql = "INSERT INTO dettaglio_ordine (ordine_id, prodotto_id, quantita, prezzo_unitario, iva) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, det.getOrdineId());
             ps.setInt(2, det.getProdottoId());
             ps.setInt(3, det.getQuantita());
@@ -52,7 +54,7 @@ public class OrdineDAO {
         List<Ordine> ordini = new ArrayList<>();
         String sql = "SELECT * FROM ordine WHERE utente_id = ? ORDER BY data_ordine DESC";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, utenteId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -73,7 +75,7 @@ public class OrdineDAO {
         List<DettaglioOrdine> dettagli = new ArrayList<>();
         String sql = "SELECT * FROM dettaglio_ordine WHERE ordine_id = ?";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, ordineId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -93,11 +95,11 @@ public class OrdineDAO {
         }
         return dettagli;
     }
-    
+
     public Ordine getOrdineById(int ordineId) throws SQLException {
         String sql = "SELECT * FROM ordine WHERE id = ?";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, ordineId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -113,17 +115,20 @@ public class OrdineDAO {
         }
         return null;
     }
-    
+
     public List<Ordine> getOrdiniConFiltri(String dataInizio, String dataFine, String clienteId) throws SQLException {
         List<Ordine> ordini = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM ordine WHERE 1=1");
-        if (dataInizio != null && !dataInizio.isEmpty()) sql.append(" AND data_ordine >= '").append(dataInizio).append("'");
-        if (dataFine != null && !dataFine.isEmpty()) sql.append(" AND data_ordine <= '").append(dataFine).append(" 23:59:59'");
-        if (clienteId != null && !clienteId.isEmpty()) sql.append(" AND utente_id = ").append(clienteId);
+        if (dataInizio != null && !dataInizio.isEmpty())
+            sql.append(" AND data_ordine >= '").append(dataInizio).append("'");
+        if (dataFine != null && !dataFine.isEmpty())
+            sql.append(" AND data_ordine <= '").append(dataFine).append(" 23:59:59'");
+        if (clienteId != null && !clienteId.isEmpty())
+            sql.append(" AND utente_id = ").append(clienteId);
         sql.append(" ORDER BY data_ordine DESC");
         try (Connection conn = ds.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql.toString())) {
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(sql.toString())) {
             while (rs.next()) {
                 Ordine o = new Ordine();
                 o.setId(rs.getInt("id"));

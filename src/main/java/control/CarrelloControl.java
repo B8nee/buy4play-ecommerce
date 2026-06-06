@@ -36,7 +36,8 @@ public class CarrelloControl extends HttpServlet {
                         int id = Integer.parseInt(idParam);
                         ProdottoDAO dao = new ProdottoDAO();
                         Prodotto p = dao.doRetrieveById(id);
-                        if (p != null) cart.addItem(p);
+                        if (p != null)
+                            cart.addItem(p);
                     }
                     break;
                 case "remove":

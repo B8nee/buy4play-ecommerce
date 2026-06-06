@@ -15,7 +15,8 @@ public class AdminProdottiControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null)
+            action = "list";
 
         ProdottoDAO dao = new ProdottoDAO();
         try {
@@ -37,7 +38,8 @@ public class AdminProdottiControl extends HttpServlet {
                 case "delete":
                     id = Integer.parseInt(request.getParameter("id"));
                     boolean ok = dao.doDelete(id);
-                    if (!ok) request.setAttribute("error", "Prodotto non eliminabile (presente in ordini)");
+                    if (!ok)
+                        request.setAttribute("error", "Prodotto non eliminabile (presente in ordini)");
                     response.sendRedirect("gestioneProdotti?action=list");
                     break;
                 default:
@@ -52,7 +54,8 @@ public class AdminProdottiControl extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) action = "add";
+        if (action == null)
+            action = "add";
         ProdottoDAO dao = new ProdottoDAO();
         try {
             Prodotto p = new Prodotto();

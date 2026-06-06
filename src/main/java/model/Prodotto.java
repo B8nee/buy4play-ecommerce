@@ -6,8 +6,9 @@ public class Prodotto {
     private String piattaforma;
     private double prezzo;
     private String immagineUrl;
-    
-    public Prodotto() {}
+
+    public Prodotto() {
+    }
 
     public Prodotto(int id, String nome, String piattaforma, double prezzo, String immagineUrl) {
         this.id = id;
@@ -17,18 +18,43 @@ public class Prodotto {
         this.immagineUrl = immagineUrl;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getPiattaforma() { return piattaforma; }
-    public void setPiattaforma(String piattaforma) { this.piattaforma = piattaforma; }
+    public String getNome() {
+        return nome;
+    }
 
-    public double getPrezzo() { return prezzo; }
-    public void setPrezzo(double prezzo) { this.prezzo = prezzo; }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-    public String getImmagineUrl() { return immagineUrl; }
-    public void setImmagineUrl(String immagineUrl) { this.immagineUrl = immagineUrl; }
+    public String getPiattaforma() {
+        return piattaforma;
+    }
+
+    public void setPiattaforma(String piattaforma) {
+        this.piattaforma = piattaforma;
+    }
+
+    public double getPrezzo() {
+        return prezzo;
+    }
+
+    public void setPrezzo(double prezzo) {
+        this.prezzo = prezzo;
+    }
+
+    public String getImmagineUrl() {
+        return immagineUrl;
+    }
+
+    public void setImmagineUrl(String immagineUrl) {
+        this.immagineUrl = immagineUrl;
+    }
 }

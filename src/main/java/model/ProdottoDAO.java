@@ -28,7 +28,7 @@ public class ProdottoDAO {
         List<Prodotto> prodotti = new ArrayList<>();
         String sql = "SELECT * FROM prodotto ORDER BY id LIMIT ? OFFSET ?";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, limit);
             ps.setInt(2, offset);
             try (ResultSet rs = ps.executeQuery()) {
@@ -45,24 +45,23 @@ public class ProdottoDAO {
         }
         return prodotti;
     }
-    
+
     public int countProdotti() throws SQLException {
         String sql = "SELECT COUNT(*) FROM prodotto";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
         }
         return 0;
     }
-    
-    
+
     public Prodotto doRetrieveById(int id) throws SQLException {
         String sql = "SELECT * FROM prodotto WHERE id = ?";
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -78,7 +77,7 @@ public class ProdottoDAO {
         }
         return null;
     }
-    
+
     public void doSave(Prodotto p) throws SQLException {
         String sql = "INSERT INTO prodotto (nome, piattaforma, prezzo, immagine_url) VALUES (?, ?, ?, ?)";
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -108,8 +107,30 @@ public class ProdottoDAO {
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            if (e.getErrorCode() == 1451) return false;
+            if (e.getErrorCode() == 1451)
+                return false;
             throw e;
         }
+    }
+
+    public List<Prodotto> searchProducts(String query) throws SQLException {
+        List<Prodotto> prodotti = new ArrayList<>();
+        String sql = "SELECT * FROM prodotto WHERE nome LIKE ? LIMIT 10";
+        try (Connection conn = ds.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + query + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Prodotto p = new Prodotto();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setPiattaforma(rs.getString("piattaforma"));
+                    p.setPrezzo(rs.getDouble("prezzo"));
+                    p.setImmagineUrl(rs.getString("immagine_url"));
+                    prodotti.add(p);
+                }
+            }
+        }
+        return prodotti;
     }
 }

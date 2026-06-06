@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import model.Utente;
 
-@WebFilter({"/admin/*"})
+@WebFilter({ "/admin/*" })
 public class AdminFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -28,6 +28,10 @@ public class AdminFilter implements Filter {
             chain.doFilter(request, response);
         }
     }
-    public void init(FilterConfig fConfig) throws ServletException {}
-    public void destroy() {}
+
+    public void init(FilterConfig fConfig) throws ServletException {
+    }
+
+    public void destroy() {
+    }
 }
