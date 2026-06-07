@@ -10,6 +10,7 @@ public class Ordine {
     private double totale;
     private String indirizzoSpedizione;
     private List<DettaglioOrdine> dettagli;
+    private Utente utente;
 
     public int getId() {
         return id;
@@ -58,4 +59,7 @@ public class Ordine {
     public void setDettagli(List<DettaglioOrdine> dettagli) {
         this.dettagli = dettagli;
     }
+    
+    public Utente getUtente() { return utente; }
+    public void setUtente(Utente utente) { this.utente = utente; }
 }

@@ -1,61 +1,85 @@
 package control;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.gson.Gson;
 import model.Prodotto;
 import model.ProdottoDAO;
+import model.Utente;
 
-@WebServlet("/admin/gestioneProdotti")
+@WebServlet("/admin/GestioneProdotti")
 public class AdminProdottiControl extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action == null)
-            action = "list";
+        Utente admin = (Utente) request.getSession().getAttribute("utente");
+        if (admin == null || !"admin".equals(admin.getRuolo())) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
 
+        String action = request.getParameter("action");
         ProdottoDAO dao = new ProdottoDAO();
+
         try {
-            switch (action) {
-                case "list":
-                    List<Prodotto> prodotti = dao.doRetrieveAll(0, 100);
-                    request.setAttribute("prodotti", prodotti);
-                    request.getRequestDispatcher("/admin/prodotti.jsp").forward(request, response);
-                    break;
-                case "addForm":
-                    request.getRequestDispatcher("/admin/prodottoForm.jsp").forward(request, response);
-                    break;
-                case "editForm":
-                    int id = Integer.parseInt(request.getParameter("id"));
-                    Prodotto p = dao.doRetrieveById(id);
-                    request.setAttribute("prodotto", p);
-                    request.getRequestDispatcher("/admin/prodottoForm.jsp").forward(request, response);
-                    break;
-                case "delete":
-                    id = Integer.parseInt(request.getParameter("id"));
-                    boolean ok = dao.doDelete(id);
-                    if (!ok)
-                        request.setAttribute("error", "Prodotto non eliminabile (presente in ordini)");
-                    response.sendRedirect("gestioneProdotti?action=list");
-                    break;
-                default:
-                    response.sendRedirect("gestioneProdotti?action=list");
+            if ("get".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Prodotto p = dao.doRetrieveById(id);
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                Gson gson = new Gson();
+                out.print(gson.toJson(p));
+                out.flush();
+                return;
+            } 
+            else if ("delete".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                boolean deleted = dao.doDelete(id);
+                if (deleted) {
+                    request.getSession().setAttribute("messaggio", "Prodotto eliminato con successo");
+                } else {
+                    request.getSession().setAttribute("errore", "Impossibile eliminare: prodotto presente in ordini esistenti");
+                }
+                response.sendRedirect("GestioneProdotti");
+                return;
             }
+            int page = 1;
+            int limit = 10;
+            String pageParam = request.getParameter("page");
+            if (pageParam != null) {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            }
+            int offset = (page - 1) * limit;
+            List<Prodotto> prodotti = dao.doRetrieveAll(offset, limit);
+            int totalProdotti = dao.countProdotti();
+            int totalPages = (int) Math.ceil((double) totalProdotti / limit);
+            request.setAttribute("prodotti", prodotti);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.getRequestDispatcher("/admin/gestioneprodotti.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("gestioneProdotti?action=list");
+            response.sendError(500);
         }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Utente admin = (Utente) request.getSession().getAttribute("utente");
+        if (admin == null || !"admin".equals(admin.getRuolo())) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
         String action = request.getParameter("action");
-        if (action == null)
-            action = "add";
         ProdottoDAO dao = new ProdottoDAO();
         try {
             Prodotto p = new Prodotto();
@@ -63,16 +87,21 @@ public class AdminProdottiControl extends HttpServlet {
             p.setPiattaforma(request.getParameter("piattaforma"));
             p.setPrezzo(Double.parseDouble(request.getParameter("prezzo")));
             p.setImmagineUrl(request.getParameter("immagineUrl"));
+            p.setPopolare(request.getParameter("popolare") != null);
+
             if ("add".equals(action)) {
                 dao.doSave(p);
+                request.getSession().setAttribute("messaggio", "Prodotto aggiunto con successo");
             } else if ("update".equals(action)) {
                 p.setId(Integer.parseInt(request.getParameter("id")));
                 dao.doUpdate(p);
+                request.getSession().setAttribute("messaggio", "Prodotto aggiornato con successo");
             }
-            response.sendRedirect("gestioneProdotti?action=list");
+            response.sendRedirect("GestioneProdotti");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("gestioneProdotti?action=addForm");
+            request.getSession().setAttribute("errore", "Errore durante il salvataggio");
+            response.sendRedirect("GestioneProdotti");
         }
     }
 }

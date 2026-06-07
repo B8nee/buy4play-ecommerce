@@ -1,109 +1,130 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ include file="header.jsp" %>
-        <%@ page import="java.util.List, model.Prodotto" %>
-            <h2>🔥 Catalogo giochi</h2>
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="searchInput" placeholder="Cerca un gioco..."
-                    style="width: 100%; padding: 10px; font-size: 16px;">
-                <div id="suggestions"
-                    style="border: 1px solid #ccc; background: white; display: none; position: absolute; width: calc(100% - 22px); max-height: 200px; overflow-y: auto;">
-                </div>
-            </div>
-            <div class="catalogo-grid"
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 2rem;">
-                <% List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("listaProdotti");
-                        if (prodotti != null && !prodotti.isEmpty()) {
-                        for (Prodotto p : prodotti) {
-                        %>
-                        <div class="prodotto-card"
-                            style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="<%= p.getImmagineUrl() %>" alt="<%= p.getNome() %>"
-                                style="width:100%; height:200px; object-fit:cover;">
-                            <div style="padding: 1rem;">
-                                <h3><a href="dettaglio?id=<%= p.getId() %>" style="text-decoration: none; color: #333;">
-                                        <%= p.getNome() %>
-                                    </a></h3>
-                                <div style="color: #e94560;">
-                                    <%= p.getPiattaforma() %>
-                                </div>
-                                <div class="prezzo" style="font-size: 1.3rem; font-weight: bold;">&euro; <%=
-                                        String.format("%.2f", p.getPrezzo()) %>
-                                </div>
-                                <a href="carrello?action=add&id=<%= p.getId() %>" class="btn"
-                                    style="display: block; text-align: center;">🛒 Aggiungi</a>
-                            </div>
-                        </div>
-                        <% } } else { %>
-                            <p>Nessun prodotto disponibile.</p>
-                            <% } %>
-            </div>
+<%@ include file="header.jsp" %>
+<%@ page import="java.util.List, model.Prodotto" %>
+<h2>Catalogo giochi</h2>
 
-            <% Integer currentPage=(Integer) request.getAttribute("currentPage"); Integer totalPages=(Integer)
-                request.getAttribute("totalPages"); Integer limit=(Integer) request.getAttribute("limit"); if
-                (totalPages !=null && totalPages> 1) {
-                %>
-                <div class="pagination" style="text-align: center; margin-top: 2rem;">
-                    <% if (currentPage> 1) { %>
-                        <a href="catalogo?page=<%= currentPage-1 %>&limit=<%= limit %>" class="btn">« Precedente</a>
-                        <% } %>
-                            <% for (int p=1; p <=totalPages; p++) { %>
-                                <% if (p==currentPage) { %>
-                                    <span
-                                        style="background-color: #e94560; color:white; padding:0.5rem 0.8rem; border-radius:5px;">
-                                        <%= p %>
-                                    </span>
-                                    <% } else { %>
-                                        <a href="catalogo?page=<%= p %>&limit=<%= limit %>"
-                                            style="padding:0.5rem 0.8rem; border:1px solid #ddd; border-radius:5px; text-decoration:none;">
-                                            <%= p %>
-                                        </a>
-                                        <% } %>
-                                            <% } %>
-                                                <% if (currentPage < totalPages) { %>
-                                                    <a href="catalogo?page=<%= currentPage+1 %>&limit=<%= limit %>"
-                                                        class="btn">Successivo »</a>
-                                                    <% } %>
-                </div>
-                <% } %>
+<div class="filters-bar">
+    <div class="filter-group">
+        <label>Piattaforma:</label>
+        <select id="platformFilter" onchange="applyFilters()">
+            <option value="">Tutte</option>
+            <option value="PC" <%= "PC".equals(request.getAttribute("platform")) ? "selected" : "" %>>PC</option>
+            <option value="PS5" <%= "PS5".equals(request.getAttribute("platform")) ? "selected" : "" %>>PS5</option>
+            <option value="Xbox" <%= "Xbox".equals(request.getAttribute("platform")) ? "selected" : "" %>>Xbox</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Ordina per:</label>
+        <select id="sortBy" onchange="applyFilters()">
+            <option value="prezzo_asc" <%= "prezzo_asc".equals(request.getAttribute("sort")) ? "selected" : "" %>>Prezzo crescente</option>
+            <option value="prezzo_desc" <%= "prezzo_desc".equals(request.getAttribute("sort")) ? "selected" : "" %>>Prezzo decrescente</option>
+        </select>
+    </div>
+</div>
 
-                    <script>
-                        const searchInput = document.getElementById('searchInput');
-                        const suggestionsDiv = document.getElementById('suggestions');
+<div class="catalogo">
+    <%
+        List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("listaProdotti");
+        if (prodotti != null && !prodotti.isEmpty()) {
+            for (Prodotto p : prodotti) {
+    %>
+    <div class="prodotto-card">
+        <% if (p.isPopolare()) { %>
+            <div class="card-badge">🔥 Popolare</div>
+        <% } %>
+        <img src="<%= p.getImmagineUrl() %>" alt="<%= p.getNome() %>">
+        <div class="info">
+            <h3><a href="dettaglio?id=<%= p.getId() %>"><%= p.getNome() %></a></h3>
+            <div class="piattaforma"><%= p.getPiattaforma() %></div>
+            <div class="prezzo">&euro; <%= String.format("%.2f", p.getPrezzo()) %></div>
+            <button class="btn add-to-cart" data-id="<%= p.getId() %>">🛒 Aggiungi al carrello</button>
+        </div>
+    </div>
+    <%
+            }
+        } else {
+    %>
+    <p>Nessun prodotto disponibile.</p>
+    <% } %>
+</div>
 
-                        searchInput.addEventListener('input', function () {
-                            const query = this.value.trim();
-                            if (query.length < 2) {
-                                suggestionsDiv.style.display = 'none';
-                                return;
-                            }
-                            fetch('SearchProduct?q=' + encodeURIComponent(query))
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.length > 0) {
-                                        suggestionsDiv.innerHTML = '';
-                                        data.forEach(product => {
-                                            const div = document.createElement('div');
-                                            div.textContent = product.nome + ' - €' + product.prezzo;
-                                            div.style.padding = '8px';
-                                            div.style.cursor = 'pointer';
-                                            div.onclick = () => {
-                                                window.location.href = 'dettaglio?id=' + product.id;
-                                            };
-                                            suggestionsDiv.appendChild(div);
-                                        });
-                                        suggestionsDiv.style.display = 'block';
-                                    } else {
-                                        suggestionsDiv.innerHTML = '<div style="padding:8px;">Nessun risultato</div>';
-                                        suggestionsDiv.style.display = 'block';
-                                    }
-                                })
-                                .catch(err => console.error(err));
-                        });
+<%
+    Integer currentPage = (Integer) request.getAttribute("currentPage");
+    Integer totalPages = (Integer) request.getAttribute("totalPages");
+    Integer limit = (Integer) request.getAttribute("limit");
+    String platform = (String) request.getAttribute("platform");
+    String sort = (String) request.getAttribute("sort");
+    
+    if (totalPages != null && totalPages > 1) {
+%>
+<div class="pagination">
+    <% if (currentPage > 1) { %>
+        <a href="#" data-page="<%= currentPage-1 %>">« Precedente</a>
+    <% } %>
+    <% for (int p = 1; p <= totalPages; p++) { %>
+        <% if (p == currentPage) { %>
+            <span class="active"><%= p %></span>
+        <% } else { %>
+            <a href="#" data-page="<%= p %>"><%= p %></a>
+        <% } %>
+    <% } %>
+    <% if (currentPage < totalPages) { %>
+        <a href="#" data-page="<%= currentPage+1 %>">Successivo »</a>
+    <% } %>
+</div>
+<% } %>
 
-                        document.addEventListener('click', function (e) {
-                            if (e.target !== searchInput) {
-                                suggestionsDiv.style.display = 'none';
-                            }
-                        });
-                    </script>
-                    <%@ include file="footer.jsp" %>
+<script>
+    function applyFilters() {
+        const platform = document.getElementById('platformFilter').value;
+        const sort = document.getElementById('sortBy').value;
+        const url = new URL(window.location.href);
+        if (platform) url.searchParams.set('platform', platform);
+        else url.searchParams.delete('platform');
+        if (sort) url.searchParams.set('sort', sort);
+        else url.searchParams.delete('sort');
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
+    
+    document.querySelectorAll('.pagination a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        });
+    });
+    
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-id');
+            const originalText = this.innerHTML;
+            this.innerHTML = '⏳ Caricamento...';
+            fetch('carrello?action=add&id=' + productId, { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        this.innerHTML = '✓ Aggiunto!';
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                        }, 1500);
+                    } else {
+                        this.innerHTML = '❌ Errore';
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                        }, 2000);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.innerHTML = '❌ Errore';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                });
+        });
+    });
+</script>
+
+<%@ include file="footer.jsp" %>

@@ -6,6 +6,7 @@ public class Prodotto {
     private String piattaforma;
     private double prezzo;
     private String immagineUrl;
+    private boolean popolare;
 
     public Prodotto() {
     }
@@ -56,5 +57,13 @@ public class Prodotto {
 
     public void setImmagineUrl(String immagineUrl) {
         this.immagineUrl = immagineUrl;
+    }
+    
+    public boolean isPopolare() {
+        return popolare;
+    }
+
+    public void setPopolare(boolean popolare) {
+        this.popolare = popolare;
     }
 }
