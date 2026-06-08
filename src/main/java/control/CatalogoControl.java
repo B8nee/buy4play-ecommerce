@@ -14,37 +14,50 @@ import model.ProdottoDAO;
 public class CatalogoControl extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException {
+	    String search = request.getParameter("search");
+	    ProdottoDAO dao = new ProdottoDAO();
+
+	    if (search != null && !search.trim().isEmpty()) {
+	        try {
+	            List<Prodotto> prodotti = dao.searchProducts(search.trim());
+	            request.setAttribute("listaProdotti", prodotti);
+	            request.setAttribute("searchQuery", search);
+	            request.getRequestDispatcher("/catalogo.jsp").forward(request, response);
+	            return;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
 	    int page = 1;
 	    int limit = 12;
 	    String pageParam = request.getParameter("page");
 	    String limitParam = request.getParameter("limit");
 	    String platform = request.getParameter("platform");
 	    String sort = request.getParameter("sort");
-	    
+
 	    if (pageParam != null && !pageParam.isEmpty()) {
 	        try { page = Integer.parseInt(pageParam); if (page < 1) page = 1; } catch (NumberFormatException e) {}
 	    }
 	    if (limitParam != null && !limitParam.isEmpty()) {
 	        try { limit = Integer.parseInt(limitParam); if (limit < 1) limit = 12; } catch (NumberFormatException e) {}
 	    }
-	    
 	    int offset = (page - 1) * limit;
-	    ProdottoDAO dao = new ProdottoDAO();
 	    try {
 	        List<Prodotto> prodotti = dao.doRetrieveAll(offset, limit, platform, sort);
 	        int totalProdotti = dao.countProdotti(platform);
 	        int totalPages = (int) Math.ceil((double) totalProdotti / limit);
-	        
 	        request.setAttribute("listaProdotti", prodotti);
 	        request.setAttribute("currentPage", page);
 	        request.setAttribute("totalPages", totalPages);
 	        request.setAttribute("limit", limit);
 	        request.setAttribute("platform", platform);
 	        request.setAttribute("sort", sort);
+	        request.getRequestDispatcher("/catalogo.jsp").forward(request, response);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        request.setAttribute("error", "Errore nel caricamento del catalogo");
+	        request.getRequestDispatcher("/catalogo.jsp").forward(request, response);
 	    }
-	    request.getRequestDispatcher("/catalogo.jsp").forward(request, response);
 	}
 }

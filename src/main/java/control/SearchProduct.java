@@ -24,7 +24,7 @@ public class SearchProduct extends HttpServlet {
         }
         ProdottoDAO dao = new ProdottoDAO();
         try {
-            List<Prodotto> results = dao.searchProducts(query);
+            List<Prodotto> results = dao.searchProducts(query.trim());
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             Gson gson = new Gson();

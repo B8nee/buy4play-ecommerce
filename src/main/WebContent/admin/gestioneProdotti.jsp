@@ -21,12 +21,13 @@
         }
         .admin-title {
             font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             border-left: 4px solid #2ed573;
             padding-left: 1rem;
         }
         .btn-add {
             background: #2ed573;
+            margin-left: 1.5rem;
             margin-bottom: 2rem;
             display: inline-block;
         }
@@ -103,6 +104,32 @@
             font-size: 1.5rem;
             color: #b9c7d9;
         }
+
+        .checkbox-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem 0;
+        }
+        .checkbox-row label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .checkbox-row input {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn-save {
+            display: block !important;
+            width: fit-content !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            float: none !important;
+            text-align: center !important;
+        }
     </style>
 </head>
 <body>
@@ -119,7 +146,7 @@
         <tbody>
             <%
                 List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("prodotti");
-                if (prodotti != null) {
+                if (prodotti != null && !prodotti.isEmpty()) {
                     for (Prodotto p : prodotti) {
             %>
             <tr>
@@ -130,7 +157,7 @@
                 <td><%= p.isPopolare() ? "🔥 Sì" : "No" %></td>
                 <td class="action-buttons">
                     <a href="javascript:void(0)" onclick="openEditModal(<%= p.getId() %>)" class="btn-edit">Modifica</a>
-                    <a href="GestioneProdotti?action=delete&id=<%= p.getId() %>" class="btn-delete" onclick="return confirm('Eliminare questo prodotto?')">Elimina</a>
+                    <a href="<%= request.getContextPath() %>/admin/GestioneProdotti?action=delete&id=<%= p.getId() %>" class="btn-delete" onclick="return confirm('Eliminare questo prodotto?')">Elimina</a>
                 </td>
             </tr>
             <%      }
@@ -145,7 +172,7 @@
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal()">&times;</span>
         <h3 id="modalTitle">Aggiungi Prodotto</h3>
-        <form id="productForm" action="GestioneProdotti" method="post">
+        <form id="productForm" action="<%= request.getContextPath() %>/admin/GestioneProdotti" method="post">
             <input type="hidden" name="action" id="formAction" value="add">
             <input type="hidden" name="id" id="productId">
             <label>Nome:</label>
@@ -156,10 +183,11 @@
             <input type="number" step="0.01" name="prezzo" id="prezzo" required>
             <label>Immagine URL:</label>
             <input type="text" name="immagineUrl" id="immagineUrl">
-            <label>
-                <input type="checkbox" name="popolare" id="popolare"> 🔥 Prodotto popolare
-            </label>
-            <input type="submit" value="Salva" class="btn">
+            <div class="checkbox-row">
+                <label for="popolare">🔥 Prodotto popolare</label>
+                <input type="checkbox" name="popolare" id="popolare">
+            </div>
+            <input type="submit" value="Salva" class="btn btn-save">
         </form>
     </div>
 </div>
@@ -177,7 +205,7 @@
         document.getElementById('productModal').style.display = 'flex';
     }
     function openEditModal(id) {
-        fetch('GestioneProdotti?action=get&id=' + id)
+        fetch('<%= request.getContextPath() %>/admin/GestioneProdotti?action=get&id=' + id)
             .then(response => response.json())
             .then(product => {
                 document.getElementById('modalTitle').innerText = 'Modifica Prodotto';

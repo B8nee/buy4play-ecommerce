@@ -11,6 +11,7 @@ public class Ordine {
     private String indirizzoSpedizione;
     private List<DettaglioOrdine> dettagli;
     private Utente utente;
+    private String stato;
 
     public int getId() {
         return id;
@@ -62,4 +63,7 @@ public class Ordine {
     
     public Utente getUtente() { return utente; }
     public void setUtente(Utente utente) { this.utente = utente; }
+    
+    public String getStato() { return stato; }
+    public void setStato(String stato) { this.stato = stato; }
 }

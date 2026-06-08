@@ -47,9 +47,10 @@ public class AdminProdottiControl extends HttpServlet {
                 } else {
                     request.getSession().setAttribute("errore", "Impossibile eliminare: prodotto presente in ordini esistenti");
                 }
-                response.sendRedirect("GestioneProdotti");
+                response.sendRedirect(request.getContextPath() + "/admin/GestioneProdotti");
                 return;
             }
+            
             int page = 1;
             int limit = 10;
             String pageParam = request.getParameter("page");
@@ -64,7 +65,7 @@ public class AdminProdottiControl extends HttpServlet {
             request.setAttribute("prodotti", prodotti);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
-            request.getRequestDispatcher("/admin/gestioneprodotti.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/gestioneProdotti.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(500);
@@ -97,11 +98,11 @@ public class AdminProdottiControl extends HttpServlet {
                 dao.doUpdate(p);
                 request.getSession().setAttribute("messaggio", "Prodotto aggiornato con successo");
             }
-            response.sendRedirect("GestioneProdotti");
+            response.sendRedirect(request.getContextPath() + "/admin/GestioneProdotti");
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("errore", "Errore durante il salvataggio");
-            response.sendRedirect("GestioneProdotti");
+            response.sendRedirect(request.getContextPath() + "/admin/GestioneProdotti");
         }
     }
 }

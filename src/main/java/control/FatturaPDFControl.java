@@ -9,23 +9,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import model.*;
+import model.DettaglioOrdine;
+import model.Ordine;
+import model.OrdineDAO;
+import model.Utente;
 
 @WebServlet("/FatturaPDFControl")
 public class FatturaPDFControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
-        if (idParam == null)
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect("ordini");
             return;
+        }
         int ordineId = Integer.parseInt(idParam);
         OrdineDAO dao = new OrdineDAO();
         try {
@@ -40,8 +47,8 @@ public class FatturaPDFControl extends HttpServlet {
                 return;
             }
 
-            Utente utente = (Utente) request.getSession().getAttribute("utente");
-            if (utente == null) {
+            Utente cliente = (Utente) request.getSession().getAttribute("utente");
+            if (cliente == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
@@ -49,56 +56,103 @@ public class FatturaPDFControl extends HttpServlet {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=fattura_ordine_" + ordineId + ".pdf");
 
-            Document document = new Document();
+            Document document = new Document(PageSize.A4);
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
 
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-            Paragraph title = new Paragraph("Fattura d'acquisto - Buy4Play", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-            document.add(new Paragraph(" "));
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{1, 1});
+
+            PdfPCell cellLeft = new PdfPCell();
+            cellLeft.setBorder(0);
+            cellLeft.addElement(new Paragraph("Buy4Play", titleFont));
+            cellLeft.addElement(new Paragraph("Via Giovanni Paolo II, 132", normalFont));
+            cellLeft.addElement(new Paragraph("84084 Fisciano (SA)", normalFont));
+            cellLeft.addElement(new Paragraph("P.IVA: 12345678901", normalFont));
+            cellLeft.addElement(new Paragraph("info@buy4play.it", normalFont));
+            headerTable.addCell(cellLeft);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            document.add(new Paragraph("Cliente: " + utente.getNome() + " " + utente.getCognome()));
-            document.add(new Paragraph("Email: " + utente.getEmail()));
-            document.add(
-                    new Paragraph("Indirizzo: " + (utente.getIndirizzo() != null ? utente.getIndirizzo() : "N/D")));
-            document.add(new Paragraph("Città: " + (utente.getCitta() != null ? utente.getCitta() : "N/D") + " ("
-                    + (utente.getProvincia() != null ? utente.getProvincia() : "N/D") + ")"));
-            document.add(new Paragraph("CAP: " + (utente.getCap() != null ? utente.getCap() : "N/D")));
-            document.add(new Paragraph("Data ordine: " + sdf.format(ordine.getDataOrdine())));
+            PdfPCell cellRight = new PdfPCell();
+            cellRight.setBorder(0);
+            cellRight.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellRight.addElement(new Paragraph("FATTURA N. " + ordineId, headerFont));
+            cellRight.addElement(new Paragraph("Data: " + sdf.format(ordine.getDataOrdine()), normalFont));
+            cellRight.addElement(new Paragraph("Ordine N. " + ordineId, normalFont));
+            headerTable.addCell(cellRight);
+            document.add(headerTable);
+
             document.add(new Paragraph(" "));
 
-            PdfPTable table = new PdfPTable(5);
+            Paragraph clienteTitle = new Paragraph("Dati Cliente", headerFont);
+            clienteTitle.setSpacingBefore(10f);
+            document.add(clienteTitle);
+            document.add(new Paragraph("Nome: " + cliente.getNome() + " " + cliente.getCognome(), normalFont));
+            document.add(new Paragraph("Email: " + cliente.getEmail(), normalFont));
+            document.add(new Paragraph("Indirizzo: " + (cliente.getIndirizzo() != null ? cliente.getIndirizzo() : "N/D"), normalFont));
+            document.add(new Paragraph("Città: " + (cliente.getCitta() != null ? cliente.getCitta() : "N/D") + " (" + (cliente.getProvincia() != null ? cliente.getProvincia() : "N/D") + ")", normalFont));
+            document.add(new Paragraph("CAP: " + (cliente.getCap() != null ? cliente.getCap() : "N/D"), normalFont));
+
+            document.add(new Paragraph(" "));
+
+            PdfPTable table = new PdfPTable(6);
             table.setWidthPercentage(100);
+            table.setWidths(new float[]{3, 1, 1, 1, 1, 1});
+            table.setHeaderRows(1);
             table.setSpacingBefore(10f);
             table.setSpacingAfter(10f);
 
-            String[] headers = { "Prodotto", "Quantità", "Prezzo unitario", "IVA", "Totale" };
+            String[] headers = {"Prodotto", "Quantità", "Prezzo unit.", "IVA %", "Imponibile", "Totale"};
             for (String h : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(h, FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                table.addCell(cell);
+                PdfPCell headerCell = new PdfPCell(new Phrase(h, headerFont));
+                headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                headerCell.setBackgroundColor(new com.itextpdf.text.BaseColor(46, 213, 115, 50));
+                table.addCell(headerCell);
             }
 
-            double totaleComplessivo = 0.0;
-            for (DettaglioOrdine d : dettagli) {
-                double prezzoConIva = d.getPrezzoUnitario() * (1 + d.getIva() / 100);
-                double totaleRiga = prezzoConIva * d.getQuantita();
-                totaleComplessivo += totaleRiga;
+            double totaleImponibile = 0.0;
+            double totaleIva = 0.0;
+            for (DettaglioOrdine det : dettagli) {
+                double imponibile = det.getPrezzoUnitario() * det.getQuantita();
+                double iva = imponibile * det.getIva() / 100;
+                double totaleRiga = imponibile + iva;
+                totaleImponibile += imponibile;
+                totaleIva += iva;
 
-                table.addCell(d.getProdotto().getNome());
-                table.addCell(String.valueOf(d.getQuantita()));
-                table.addCell(String.format("%.2f €", d.getPrezzoUnitario()));
-                table.addCell(String.format("%.0f%%", d.getIva()));
+                table.addCell(det.getProdotto().getNome());
+                table.addCell(String.valueOf(det.getQuantita()));
+                table.addCell(String.format("%.2f €", det.getPrezzoUnitario()));
+                table.addCell(String.format("%.0f%%", det.getIva()));
+                table.addCell(String.format("%.2f €", imponibile));
                 table.addCell(String.format("%.2f €", totaleRiga));
             }
-
             document.add(table);
+
+            PdfPTable totalTable = new PdfPTable(2);
+            totalTable.setWidthPercentage(50);
+            totalTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            totalTable.getDefaultCell().setBorder(0);
+            totalTable.addCell(new Phrase("Totale imponibile: ", normalFont));
+            totalTable.addCell(new Phrase(String.format("%.2f €", totaleImponibile), normalFont));
+            totalTable.addCell(new Phrase("Totale IVA: ", normalFont));
+            totalTable.addCell(new Phrase(String.format("%.2f €", totaleIva), normalFont));
+            totalTable.addCell(new Phrase("TOTALE FATTURA: ", boldFont));
+            totalTable.addCell(new Phrase(String.format("%.2f €", totaleImponibile + totaleIva), boldFont));
+
+            document.add(totalTable);
+
             document.add(new Paragraph(" "));
-            document.add(new Paragraph("Totale complessivo: " + String.format("%.2f €", totaleComplessivo),
-                    FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+            Paragraph thanks = new Paragraph("Grazie per aver acquistato su Buy4Play!", boldFont);
+            thanks.setAlignment(Element.ALIGN_CENTER);
+            document.add(thanks);
+            document.add(new Paragraph("Documento emesso elettronicamente ai sensi del D.Lgs. 127/2015", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+            document.add(new Paragraph(" ", normalFont));
 
             document.close();
         } catch (Exception e) {

@@ -179,7 +179,7 @@ public class ProdottoDAO {
     
     public List<Prodotto> searchProducts(String query) throws SQLException {
         List<Prodotto> prodotti = new ArrayList<>();
-        String sql = "SELECT * FROM prodotto WHERE nome LIKE ? LIMIT 10";
+        String sql = "SELECT * FROM prodotto WHERE nome LIKE ? LIMIT 20";
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + query + "%");

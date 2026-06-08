@@ -12,23 +12,23 @@ import model.*;
 
 @WebServlet("/ordini")
 public class OrdiniControl extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
-        if (utente == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        OrdineDAO dao = new OrdineDAO();
-        try {
-            List<Ordine> ordini = dao.getOrdiniByUtente(utente.getId());
-            request.setAttribute("ordini", ordini);
-            request.getRequestDispatcher("/ordini.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("index.jsp");
-        }
-    }
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+	    HttpSession session = request.getSession(false);
+	    Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
+	    if (utente == null) {
+	        response.sendRedirect("login.jsp");
+	        return;
+	    }
+	    
+	    OrdineDAO dao = new OrdineDAO();
+	    try {
+	        List<Ordine> ordini = dao.getOrdiniByUtente(utente.getId());
+	        request.setAttribute("ordini", ordini);
+	        request.getRequestDispatcher("/ordini.jsp").forward(request, response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.sendRedirect("catalogo");
+	    }
+	}
 }

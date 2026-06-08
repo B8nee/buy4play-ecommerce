@@ -7,6 +7,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Buy 4 Play</title>
+        <link rel="icon" type="image/x-icon" href="<%= request.getContextPath() %>/favicon.ico">
         <style>
             * {
                 margin: 0;
@@ -632,49 +633,163 @@ th {
 tr:hover {
     background: rgba(46, 213, 115, 0.05);
 }
+
+.cart-link {
+    position: relative;
+}
+.cart-badge {
+            background: #e94560;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 0.1rem 0.4rem;
+            border-radius: 20px;
+            min-width: 18px;
+            text-align: center;
+            margin-left: 6px;
+            display: inline-block;
+            line-height: 1.2;
+        }
+        
+        .suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1e232c;
+    border-radius: 20px;
+    margin-top: 5px;
+    z-index: 1000;
+    display: none;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #2ed573;
+}
+.suggestions-dropdown div {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #2c3e3a;
+    color: white;
+}
+.suggestions-dropdown div:hover {
+    background: #2ed573;
+    color: #0a0c10;
+}
+
+a {
+    text-decoration: none;
+}
         </style>
     </head>
 
     <body>
         <header>
     <div class="logo">
-        <a href="index.jsp" class="icon-link">
+        <a href="<%= request.getContextPath() %>/index.jsp" class="icon-link">
             <h1>Buy 4 Play</h1>
         </a>
         <p>Le migliori chiavi per i tuoi giochi</p>
     </div>
-    <div class="search-area">
-        <input type="text" id="searchInputHeader" placeholder="Cerca gioco...">
-        <button type="button" onclick="searchNow()">🔍</button>
-    </div>
+    <div class="search-area" style="position: relative;">
+    <input type="text" id="searchInputHeader" placeholder="Cerca gioco..." autocomplete="off">
+    <button type="button" onclick="searchNow()">🔍</button>
+    <div id="searchSuggestions" class="suggestions-dropdown"></div>
+</div>
     <div class="user-actions">
         <% model.Utente utente = (model.Utente) session.getAttribute("utente"); %>
         <% if (utente != null) { %>
-            <a href="profilo" class="icon-link user-info">👤 <%= utente.getNome() %></a>
+            <a href="<%= request.getContextPath() %>/profilo" class="icon-link user-info">👤 <%= utente.getNome() %></a>
             <% if ("admin".equals(utente.getRuolo())) { %>
-                <a href="admin/index.jsp" class="icon-link">🎛️ Pannello Admin</a>
+                <a href="<%= request.getContextPath() %>/admin/index.jsp" class="icon-link">🎛️ Pannello Admin</a>
             <% } %>
-            <a href="catalogo" class="icon-link">📖 Catalogo</a>
-            <a href="carrello" class="icon-link">🛒 Carrello</a>
-            <a href="logout" class="icon-link">Logout</a>
+            <a href="<%= request.getContextPath() %>/catalogo" class="icon-link">📖 Catalogo</a>
+            <a href="<%= request.getContextPath() %>/carrello" class="icon-link cart-link">
+    🛒 Carrello
+    <span id="cart-count" class="cart-badge">0</span>
+</a>
+            <a href="<%= request.getContextPath() %>/logout" class="icon-link">Logout</a>
         <% } else { %>
-            <a href="catalogo" class="icon-link">📖 Catalogo</a>
-            <a href="carrello" class="icon-link">🛒 Carrello</a>
-            <a href="login.jsp" class="icon-link">➜ Accedi</a>
-            <a href="registrazione.jsp" class="icon-link">📝 Registrati</a>
+            <a href="<%= request.getContextPath() %>/catalogo" class="icon-link">📖 Catalogo</a>
+            <a href="<%= request.getContextPath() %>/carrello" class="icon-link cart-link">
+    🛒 Carrello
+    <span id="cart-count" class="cart-badge">0</span>
+</a>
+            <a href="<%= request.getContextPath() %>/login.jsp" class="icon-link">➜ Accedi</a>
+            <a href="<%= request.getContextPath() %>/registrazione.jsp" class="icon-link">📝 Registrati</a>
         <% } %>
     </div>
 </header>
         <div class="container">
 
             <script>
-                function searchNow() {
-                    let query = document.getElementById('searchInputHeader').value.trim();
+            const searchInput = document.getElementById('searchInputHeader');
+            const suggestionsDiv = document.getElementById('searchSuggestions');
+            const contextPath = "<%= request.getContextPath() %>";
+            
+            function updateCartCount() {
+                fetch(contextPath + '/carrello?action=count', {
+                    method: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var badge = document.getElementById('cart-count');
+                    if (badge) badge.innerText = data.count;
+                })
+                .catch(err => console.error('updateCartCount error:', err));
+            }
+            
+            document.addEventListener('DOMContentLoaded', updateCartCount);
+            setInterval(updateCartCount, 5000);
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    suggestionsDiv.style.display = 'none';
+                    return;
+                }
+                fetch(contextPath + '/SearchProduct?q=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            suggestionsDiv.innerHTML = '';
+                            data.forEach(product => {
+                                const div = document.createElement('div');
+                                div.textContent = product.nome + ' - €' + product.prezzo;
+                                div.onclick = () => {
+                                    window.location.href = contextPath + '/dettaglio?id=' + product.id;
+                                };
+                                suggestionsDiv.appendChild(div);
+                            });
+                            suggestionsDiv.style.display = 'block';
+                        } else {
+                            suggestionsDiv.innerHTML = '<div style="cursor:default;">Nessun risultato</div>';
+                            suggestionsDiv.style.display = 'block';
+                        }
+                    })
+                    .catch(err => console.error(err));
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim();
                     if (query.length > 0) {
-                        window.location.href = "catalogo?search=" + encodeURIComponent(query);
+                        window.location.href = contextPath + '/catalogo?search=' + encodeURIComponent(query);
                     }
                 }
-                document.getElementById('searchInputHeader').addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') searchNow();
-                });
+            });
+
+            function searchNow() {
+                const query = searchInput.value.trim();
+                if (query.length > 0) {
+                    window.location.href = contextPath + '/catalogo?search=' + encodeURIComponent(query);
+                }
+            }
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                    suggestionsDiv.style.display = 'none';
+                }
+            });
+             
             </script>
