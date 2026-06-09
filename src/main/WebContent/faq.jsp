@@ -1,11 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!--
+    Pagina delle Domande Frequenti (FAQ).
+    Presenta un elenco di domande e risposte con effetto "accordion" (apri/chiudi).
+    Le domande sono statiche (non provengono da database).
+-->
+
 <div class="faq-container">
     <h2>❓ Domande frequenti</h2>
     <p class="faq-subtitle">Trova le risposte alle domande più comuni su Buy4Play</p>
 
     <div class="faq-list">
+        <!-- Ogni elemento faq-item contiene una domanda (faq-question) e una risposta (faq-answer) -->
         <div class="faq-item">
             <div class="faq-question">🎮 Come funziona l'acquisto di una chiave videogioco?</div>
             <div class="faq-answer">
@@ -58,6 +65,7 @@
 </div>
 
 <style>
+    /* Stili per la pagina FAQ: card scura, effetto accordion, responsive */
     .faq-container {
         max-width: 900px;
         margin: 2rem auto;
@@ -107,9 +115,10 @@
         color: #b9c7d9;
         border-top: 0px solid transparent;
     }
+    /* Classe open aggiunta via JS: mostra la risposta */
     .faq-item.open .faq-answer {
         padding: 1rem 1.5rem;
-        max-height: 300px;
+        max-height: 300px;  /* Altezza sufficiente per contenere la risposta */
         border-top: 1px solid rgba(46, 213, 115, 0.2);
     }
     @media (max-width: 600px) {
@@ -127,6 +136,7 @@
 </style>
 
 <script>
+    // JavaScript per effetto accordion: click sulla domanda alterna la classe 'open'
     document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', () => {
             const parent = question.parentElement;

@@ -1,15 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!--
+    Pagina di registrazione per nuovi utenti.
+    Presenta un form con campi obbligatori (nome, cognome, email, password, conferma)
+    e opzionali (indirizzo, città, provincia, CAP).
+    Include validazione lato client (JavaScript) e controllo AJAX per verificare
+    se l'email è già registrata (campo email in tempo reale).
+-->
+
 <div class="register-wrapper">
     <div class="register-box">
         <h2>📝 Registrazione</h2>
 
+        <!-- Visualizza eventuale messaggio di errore (es. email già esistente) -->
         <% if (request.getAttribute("errore") != null) { %>
             <div class="alert error"><%= request.getAttribute("errore") %></div>
         <% } %>
 
+        <!-- Form di registrazione: invia POST alla servlet "/registrazione" -->
         <form action="registrazione" method="post" onsubmit="return validateForm()">
+            <!-- Riga: Nome e Cognome affiancati -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="nome">Nome *</label>
@@ -21,12 +32,14 @@
                 </div>
             </div>
 
+            <!-- Email con controllo AJAX di unicità -->
             <div class="form-group">
                 <label for="email">Email *</label>
                 <input type="email" id="email" name="email" required>
                 <span id="email-status" class="field-status"></span>
             </div>
 
+            <!-- Riga: Password e Conferma password -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="password">Password *</label>
@@ -38,6 +51,7 @@
                 </div>
             </div>
 
+            <!-- Riga: Indirizzo e Città (opzionali) -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="indirizzo">Indirizzo</label>
@@ -49,6 +63,7 @@
                 </div>
             </div>
 
+            <!-- Riga: Provincia (2 lettere) e CAP (5 cifre) -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="provincia">Provincia (2 lettere)</label>
@@ -63,6 +78,7 @@
             <button type="submit" class="btn btn-register">Registrati</button>
         </form>
 
+        <!-- Link per il login (già registrati) -->
         <div class="login-link">
             Hai già un account? <a href="login.jsp">Accedi qui</a>
         </div>
@@ -70,6 +86,7 @@
 </div>
 
 <style>
+    /* Stili per centrare il form, con layout a griglia responsive */
     .register-wrapper {
         display: flex;
         justify-content: center;
@@ -131,12 +148,12 @@
         margin-top: 0.3rem;
     }
     .btn-register {
-    display: block;
-    margin: 0 auto;
-    width: fit-content;
-    min-width: 180px;
-    text-align: center;
-}
+        display: block;
+        margin: 0 auto;
+        width: fit-content;
+        min-width: 180px;
+        text-align: center;
+    }
     .login-link {
         text-align: center;
         margin-top: 1.8rem;
@@ -176,24 +193,29 @@
 </style>
 
 <script>
+    // Validazione lato client prima dell'invio del form
     function validateForm() {
+        // Controllo che password e conferma coincidano
         const password = document.getElementById('password').value;
         const conferma = document.getElementById('conferma').value;
         if (password !== conferma) {
             alert('Le password non coincidono');
             return false;
         }
+        // Controllo formato email
         const email = document.getElementById('email').value;
         const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
         if (!emailRegex.test(email)) {
             alert('Inserisci un indirizzo email valido');
             return false;
         }
+        // Controllo CAP (se fornito, deve essere 5 cifre)
         const cap = document.getElementById('cap').value;
         if (cap && !/^\d{5}$/.test(cap)) {
             alert('Il CAP deve essere di 5 cifre');
             return false;
         }
+        // Controllo provincia (se fornita, deve essere 2 lettere)
         const provincia = document.getElementById('provincia').value;
         if (provincia && !/^[A-Za-z]{2}$/.test(provincia)) {
             alert('La provincia deve essere di 2 lettere (es. SA, NA)');
@@ -202,6 +224,7 @@
         return true;
     }
 
+    // Controllo AJAX per verificare se l'email è già registrata
     const emailInput = document.getElementById('email');
     const emailStatus = document.getElementById('email-status');
     if (emailInput) {

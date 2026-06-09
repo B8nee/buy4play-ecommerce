@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 <%@ page import="model.Ordine, model.DettaglioOrdine, java.util.List, java.text.SimpleDateFormat" %>
+
 <%
+    // Recupera l'oggetto Ordine e la lista dei dettagli dalla request
     Ordine ordine = (Ordine) request.getAttribute("ordine");
     if (ordine == null) {
         response.sendRedirect("ordini");
@@ -10,13 +12,25 @@
     List<DettaglioOrdine> dettagli = (List<DettaglioOrdine>) request.getAttribute("dettagli");
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 %>
+
+<!--
+    Pagina di dettaglio ordine per il cliente.
+    Mostra i dati dell'ordine (data, indirizzo, totale) e la tabella dei prodotti acquistati,
+    con calcolo dei totali riga e complessivo (IVA inclusa).
+    Offre i link per tornare alla lista ordini e scaricare la fattura PDF.
+-->
+
 <div class="dettaglio-container">
     <h2>📄 Dettaglio ordine #<%= ordine.getId() %></h2>
+    
+    <!-- Box con le informazioni principali dell'ordine -->
     <div class="dettaglio-info">
         <p><strong>Data ordine:</strong> <%= sdf.format(ordine.getDataOrdine()) %></p>
         <p><strong>Indirizzo di spedizione:</strong> <%= ordine.getIndirizzoSpedizione() != null ? ordine.getIndirizzoSpedizione() : "N/D" %></p>
         <p><strong>Totale ordine:</strong> &euro; <%= String.format("%.2f", ordine.getTotale()) %></p>
     </div>
+
+    <!-- Tabella dei prodotti (dettaglio ordine) -->
     <table class="dettaglio-table">
         <thead>
             <tr><th>Prodotto</th><th>Quantità</th><th>Prezzo unitario</th><th>IVA</th><th>Totale</th></tr>
@@ -25,6 +39,7 @@
             <%
                 double totaleRighe = 0.0;
                 for (DettaglioOrdine d : dettagli) {
+                    // Calcola il prezzo IVA inclusa e il totale riga
                     double prezzoConIva = d.getPrezzoUnitario() * (1 + d.getIva() / 100);
                     double totaleRiga = prezzoConIva * d.getQuantita();
                     totaleRighe += totaleRiga;
@@ -39,9 +54,14 @@
             <% } %>
         </tbody>
         <tfoot>
-            <tr><td colspan="4" align="right"><strong>Totale complessivo</strong></td><td><strong>&euro; <%= String.format("%.2f", totaleRighe) %></strong></td></tr>
+            <tr>
+                <td colspan="4" align="right"><strong>Totale complessivo</strong></td>
+                <td><strong>&euro; <%= String.format("%.2f", totaleRighe) %></strong></td>
+            </tr>
         </tfoot>
     </table>
+
+    <!-- Pulsanti di azione: torna agli ordini e scarica PDF -->
     <div class="dettaglio-actions">
         <a href="ordini" class="btn">← Torna agli ordini</a>
         <a href="FatturaPDFControl?id=<%= ordine.getId() %>" class="btn" target="_blank">📎 Scarica PDF fattura</a>
@@ -49,6 +69,7 @@
 </div>
 
 <style>
+    /* Stili per la pagina di dettaglio ordine (coerente con il tema scuro) */
     .dettaglio-container {
         max-width: 1000px;
         margin: 2rem auto;

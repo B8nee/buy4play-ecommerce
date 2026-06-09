@@ -1,11 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!-- 
+    Pagina "Contattaci" (statica, non invia realmente email).
+    Mostra i contatti (indirizzo, telefono, email) e un modulo di contatto.
+    Il modulo esegue validazione lato client (JavaScript) e simula l'invio
+    con un toast di successo. Non viene effettuata alcuna chiamata al server.
+-->
+
 <div class="contact-container">
     <h2>📧 Contattaci</h2>
     <p class="contact-subtitle">Hai domande? Scrivici! Risponderemo il prima possibile.</p>
 
     <div class="contact-wrapper">
+        <!-- Sezione informazioni di contatto -->
         <div class="contact-info">
             <div class="info-card">
                 <div class="info-icon">📍</div>
@@ -24,6 +32,7 @@
             </div>
         </div>
 
+        <!-- Form di contatto (simulazione) -->
         <form class="contact-form" id="contactForm">
             <div class="form-group">
                 <label for="nome">Nome e cognome *</label>
@@ -50,9 +59,11 @@
     </div>
 </div>
 
+<!-- Toast per feedback di invio simulato -->
 <div id="toastMessage" class="toast-message">📨 Messaggio inviato con successo! Ti risponderemo presto.</div>
 
 <style>
+    /* Stili per la pagina contatti: card, form, toast */
     .contact-container {
         max-width: 1200px;
         margin: 2rem auto;
@@ -188,6 +199,7 @@
 </style>
 
 <script>
+    // Validazione e simulazione invio messaggio (toast, senza chiamate al server)
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.getElementById('contactForm');
         var toast = document.getElementById('toastMessage');
@@ -196,12 +208,14 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
+                // Legge i valori dei campi
                 var nome = document.getElementById('nome').value.trim();
                 var email = document.getElementById('email').value.trim();
                 var oggetto = document.getElementById('oggetto').value.trim();
                 var messaggio = document.getElementById('messaggio').value.trim();
                 var privacy = document.getElementById('privacy').checked;
 
+                // Validazione campi obbligatori e privacy
                 if (!nome || !email || !oggetto || !messaggio) {
                     alert('Per favore, compila tutti i campi obbligatori.');
                     return;
@@ -210,17 +224,20 @@
                     alert('Devi accettare l\'informativa sulla privacy.');
                     return;
                 }
+                // Validazione formato email con regex semplice
                 var emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
                 if (!emailRegex.test(email)) {
                     alert('Inserisci un indirizzo email valido.');
                     return;
                 }
 
+                // Mostra il toast di successo e lo nasconde dopo 3.5 secondi
                 toast.classList.add('show');
                 setTimeout(function() {
                     toast.classList.remove('show');
                 }, 3500);
 
+                // Resetta il form
                 form.reset();
             });
         } else {

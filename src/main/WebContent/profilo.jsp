@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 <%@ page import="model.Utente" %>
+
 <%
+    // Recupera l'oggetto Utente dalla request (impostato dalla servlet ProfiloControl)
     Utente u = (Utente) request.getAttribute("utente");
     if (u == null) {
         response.sendRedirect("catalogo");
@@ -9,10 +11,17 @@
     }
 %>
 
+<!--
+    Pagina del profilo utente (area personale).
+    Mostra un form precompilato con i dati dell'utente, permette di modificarli
+    e di accedere alla sezione per il cambio password.
+-->
+
 <div class="profile-wrapper">
     <div class="profile-box">
         <h2>👤 Il mio profilo</h2>
 
+        <!-- Messaggi di successo o errore (es. aggiornamento avvenuto) -->
         <% if (request.getAttribute("messaggio") != null) { %>
             <div class="alert success"><%= request.getAttribute("messaggio") %></div>
         <% } %>
@@ -20,6 +29,7 @@
             <div class="alert error"><%= request.getAttribute("errore") %></div>
         <% } %>
 
+        <!-- Form di aggiornamento profilo: invia POST alla servlet "/profilo" -->
         <form action="profilo" method="post">
             <div class="form-group">
                 <label for="nome">Nome *</label>
@@ -50,11 +60,13 @@
             <button type="submit" class="btn btn-update">Aggiorna profilo</button>
         </form>
 
+        <!-- Sezione per il cambio password -->
         <div class="password-section">
             <h3>🔐 Modifica password</h3>
             <a href="cambioPassword.jsp" class="btn">Cambia password</a>
         </div>
 
+        <!-- Link per tornare al catalogo -->
         <div class="back-link">
             <a href="catalogo">← Torna al catalogo</a>
         </div>
@@ -62,6 +74,7 @@
 </div>
 
 <style>
+    /* Stili per il profilo: contenitore centrato, card scura, form a campi */
     .profile-wrapper {
         display: flex;
         justify-content: center;
@@ -110,6 +123,7 @@
         border-color: #2ed573;
         box-shadow: 0 0 0 2px rgba(46, 213, 115, 0.2);
     }
+    /* Riga per provincia e CAP affiancati */
     .form-row {
         display: flex;
         gap: 1rem;
@@ -119,6 +133,7 @@
         flex: 1;
         min-width: 130px;
     }
+    /* Pulsante di aggiornamento centrato */
     .btn-update {
         display: block;
         width: fit-content;
@@ -126,6 +141,7 @@
         font-size: 1rem;
         padding: 0.75rem 1.5rem;
     }
+    /* Sezione modifica password con separatore */
     .password-section {
         text-align: center;
         margin-top: 2rem;
@@ -137,6 +153,7 @@
         font-size: 1.2rem;
         color: #eef2ff;
     }
+    /* Pulsante outline per cambio password */
     .btn-outline {
         background: transparent;
         border: 1px solid #2ed573;
@@ -152,6 +169,7 @@
         background: #2ed573;
         color: #0a0c10;
     }
+    /* Link torna al catalogo */
     .back-link {
         text-align: center;
         margin-top: 1.5rem;
@@ -164,6 +182,7 @@
     .back-link a:hover {
         color: #2ed573;
     }
+    /* Messaggi alert */
     .alert {
         padding: 0.8rem 1rem;
         border-radius: 24px;
@@ -181,6 +200,7 @@
         color: #2ed573;
         border-left: 3px solid #2ed573;
     }
+    /* Responsive per schermi piccoli */
     @media (max-width: 500px) {
         .profile-box {
             padding: 1.5rem;

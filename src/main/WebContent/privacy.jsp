@@ -1,15 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!--
+    Pagina informativa sulla privacy (Privacy Policy).
+    Presenta i dettagli sul trattamento dei dati personali, in conformità con il GDPR.
+    Contiene sezioni su: titolare, dati raccolti, finalità, conservazione, diritti, cookie e aggiornamenti.
+-->
+
 <div class="privacy-container">
     <h2>🔒 Informativa sulla privacy</h2>
     <p class="privacy-subtitle">Come trattiamo i tuoi dati personali su Buy4Play</p>
 
     <div class="privacy-content">
+        <!-- Sezione 1: Titolare del trattamento -->
         <div class="privacy-section">
             <h3>1. Titolare del trattamento</h3>
             <p>Buy4Play – Via Giovanni Paolo II, 132 – 84084 Fisciano (SA) – P.IVA 12345678901 – email: privacy@buy4play.it</p>
         </div>
+
+        <!-- Sezione 2: Dati raccolti -->
         <div class="privacy-section">
             <h3>2. Dati raccolti</h3>
             <p>Raccogliamo i seguenti dati personali:</p>
@@ -19,6 +28,8 @@
                 <li>Dati di navigazione (indirizzo IP, tipo di browser, pagine visitate) per finalità statistiche e di sicurezza.</li>
             </ul>
         </div>
+
+        <!-- Sezione 3: Finalità e base giuridica -->
         <div class="privacy-section">
             <h3>3. Finalità e base giuridica</h3>
             <p>I tuoi dati vengono trattati per:</p>
@@ -29,24 +40,33 @@
                 <li>Migliorare i nostri servizi (interesse legittimo).</li>
             </ul>
         </div>
+
+        <!-- Sezione 4: Conservazione dei dati -->
         <div class="privacy-section">
             <h3>4. Conservazione dei dati</h3>
             <p>I dati vengono conservati per il tempo necessario a fornire i servizi richiesti e per adempiere agli obblighi di legge (es. 10 anni per le fatture).</p>
         </div>
+
+        <!-- Sezione 5: Diritti dell'interessato -->
         <div class="privacy-section">
             <h3>5. Diritti dell'interessato</h3>
             <p>Hai diritto di accedere, rettificare, cancellare i tuoi dati, limitare il trattamento, opporre al trattamento e ottenere la portabilità. Puoi esercitare i tuoi diritti scrivendo a privacy@buy4play.it.</p>
         </div>
+
+        <!-- Sezione 6: Cookie -->
         <div class="privacy-section">
             <h3>6. Cookie</h3>
             <p>Utilizziamo cookie tecnici (necessari al funzionamento del sito) e cookie analitici anonimizzati. Non utilizziamo cookie di profilazione. Puoi gestire le preferenze nel tuo browser.</p>
         </div>
+
+        <!-- Sezione 7: Modifiche alla privacy policy -->
         <div class="privacy-section">
             <h3>7. Modifiche alla privacy policy</h3>
             <p>Ci riserviamo di aggiornare questa informativa. La versione più recente è sempre disponibile su questa pagina.</p>
         </div>
     </div>
 
+    <!-- Footer della pagina: data aggiornamento e link di ritorno -->
     <div class="privacy-footer">
         <p>Ultimo aggiornamento: 7 giugno 2026</p>
         <a href="<%= request.getContextPath() %>/catalogo" class="btn btn-small">Torna al catalogo</a>
@@ -54,6 +74,7 @@
 </div>
 
 <style>
+    /* Stili per la pagina privacy: card scura, sezioni, intestazioni con bordo verde, responsive */
     .privacy-container {
         max-width: 1000px;
         margin: 2rem auto;

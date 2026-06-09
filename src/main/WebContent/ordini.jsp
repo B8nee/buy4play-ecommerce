@@ -2,15 +2,25 @@
 <%@ include file="header.jsp" %>
 <%@ page import="java.util.List, model.Ordine, java.text.SimpleDateFormat, java.util.Date" %>
 <%@ page import="java.util.Calendar, java.util.ArrayList, java.util.Collections" %>
+
+<!--
+    Pagina che mostra la lista degli ordini effettuati dall'utente autenticato.
+    Permette di filtrare gli ordini per mese/anno (estratto dalla data dell'ordine).
+    Ogni ordine è visualizzato in una card con ID, data, totale, indirizzo di spedizione
+    e link per i dettagli e il download della fattura PDF.
+-->
+
 <%
+    // Recupera la lista degli ordini dalla request (impostata dalla servlet OrdiniControl)
     List<Ordine> ordini = (List<Ordine>) request.getAttribute("ordini");
     if (ordini == null) {
         response.sendRedirect("catalogo");
         return;
     }
     SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    SimpleDateFormat sdfAnnoMese = new SimpleDateFormat("yyyy-MM");
-    
+    SimpleDateFormat sdfAnnoMese = new SimpleDateFormat("yyyy-MM");   // formato per il filtro
+
+    // Gestione del filtro per mese/anno (parametro "mese" dalla request)
     String filtroMese = request.getParameter("mese");
     List<Ordine> ordiniFiltrati = ordini;
     if (filtroMese != null && !filtroMese.isEmpty()) {
@@ -23,24 +33,27 @@
         }
     }
 %>
+
 <div class="ordini-container">
     <h2>📋 I miei ordini</h2>
 
+    <!-- Filtro per mese/anno (select che invia automaticamente il form) -->
     <div class="filtro-ordini">
         <form method="get" action="ordini">
             <label>Filtra per mese:</label>
             <select name="mese" onchange="this.form.submit()">
                 <option value="">Tutti</option>
                 <%
+                    // Estrae i periodi (anno-mese) univoci presenti negli ordini
                     java.util.Set<String> periodi = new java.util.HashSet<>();
                     for (Ordine o : ordini) {
                         periodi.add(sdfAnnoMese.format(o.getDataOrdine()));
                     }
                     List<String> periodiList = new ArrayList<>(periodi);
-                    Collections.sort(periodiList, Collections.reverseOrder());
+                    Collections.sort(periodiList, Collections.reverseOrder());  // ordine decrescente
                     for (String p : periodiList) {
                         String[] parts = p.split("-");
-                        String visualizza = parts[1] + "/" + parts[0];
+                        String visualizza = parts[1] + "/" + parts[0];  // formato "MM/YYYY"
                 %>
                 <option value="<%= p %>" <%= p.equals(filtroMese) ? "selected" : "" %>><%= visualizza %></option>
                 <% } %>
@@ -52,12 +65,14 @@
         </form>
     </div>
 
+    <!-- Se nessun ordine soddisfa il filtro, mostra messaggio vuoto -->
     <% if (ordiniFiltrati.isEmpty()) { %>
         <div class="empty-orders">
             <p>Nessun ordine trovato.</p>
             <a href="catalogo" class="btn">Inizia a fare acquisti</a>
         </div>
     <% } else { %>
+        <!-- Griglia delle card degli ordini -->
         <div class="ordini-grid">
             <% for (Ordine o : ordiniFiltrati) { %>
                 <div class="ordine-card">
@@ -80,6 +95,7 @@
 </div>
 
 <style>
+    /* Stili per la pagina degli ordini: container, filtro, card, responsive */
     .ordini-container {
         max-width: 1000px;
         margin: 2rem auto;

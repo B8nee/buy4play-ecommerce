@@ -1,10 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!--
+    Pagina per il cambio password dell'utente autenticato.
+    Presenta un form con tre campi: password attuale, nuova password e conferma.
+    I messaggi di errore o successo vengono visualizzati tramite attributi della request.
+-->
+
 <div class="password-wrapper">
     <div class="password-box">
         <h2>🔐 Cambio password</h2>
 
+        <!-- Visualizza eventuali messaggi di errore o successo -->
         <% if (request.getAttribute("errore") != null) { %>
             <div class="alert error"><%= request.getAttribute("errore") %></div>
         <% } %>
@@ -12,6 +19,7 @@
             <div class="alert success"><%= request.getAttribute("messaggio") %></div>
         <% } %>
 
+        <!-- Form di cambio password, invia POST alla servlet "/cambioPassword" -->
         <form action="cambioPassword" method="post">
             <div class="input-group">
                 <label for="oldPassword">Password attuale</label>
@@ -31,6 +39,7 @@
             <button type="submit" class="btn btn-change">Cambia password</button>
         </form>
 
+        <!-- Link per tornare alla pagina del profilo -->
         <div class="back-link">
             <a href="profilo">← Torna al profilo</a>
         </div>
@@ -38,6 +47,7 @@
 </div>
 
 <style>
+    /* Stili per centrare e dare un look moderno al form di cambio password */
     .password-wrapper {
         display: flex;
         justify-content: center;

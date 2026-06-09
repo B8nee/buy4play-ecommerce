@@ -1,10 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 
+<!--
+    Pagina di login per l'autenticazione degli utenti.
+    Presenta un form con campi email e password, checkbox "Ricordami"
+    e link alla registrazione.
+    I messaggi di errore o successo (es. registrazione avvenuta) vengono visualizzati
+    tramite attributi della request.
+-->
+
 <div class="login-wrapper">
     <div class="login-box">
         <h2>🔐 Accesso</h2>
 
+        <!-- Visualizzazione di eventuali messaggi di errore o successo -->
         <% if (request.getAttribute("errore") != null) { %>
             <div class="alert error"><%= request.getAttribute("errore") %></div>
         <% } %>
@@ -12,6 +21,7 @@
             <div class="alert success"><%= request.getAttribute("messaggio") %></div>
         <% } %>
 
+        <!-- Form di login: invia i dati alla servlet "/login" con metodo POST -->
         <form action="login" method="post">
             <div class="input-group">
                 <label for="email">Email</label>
@@ -23,6 +33,7 @@
                 <input type="password" id="password" name="password" required>
             </div>
 
+            <!-- Checkbox per il login persistente (remember me) -->
             <div class="checkbox-wrapper">
                 <label for="rememberMe">Ricordami</label>
                 <input type="checkbox" id="rememberMe" name="rememberMe">
@@ -31,6 +42,7 @@
             <button type="submit" class="btn btn-login">Accedi</button>
         </form>
 
+        <!-- Link per la registrazione (nuovi utenti) -->
         <div class="register-link">
             Non hai un account? <a href="registrazione.jsp">Registrati qui</a>
         </div>
@@ -38,6 +50,7 @@
 </div>
 
 <style>
+    /* Stili per centrare e dare un look moderno al form di login */
     .login-wrapper {
         display: flex;
         justify-content: center;
@@ -85,32 +98,34 @@
         border-color: #2ed573;
         box-shadow: 0 0 0 2px rgba(46, 213, 115, 0.2);
     }
+    /* Checkbox allineata orizzontalmente (testo a sinistra, checkbox a destra) */
     .checkbox-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin: 1rem 0 1.5rem;
-}
-.checkbox-wrapper input {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
-    accent-color: #2ed573;
-    flex-shrink: 0;
-}
-.checkbox-wrapper label {
-    color: #b9c7d9;
-    cursor: pointer;
-    user-select: none;
-    font-weight: 500;
-    margin: 0;
-    padding: 0;
-    line-height: 18px;
-    vertical-align: middle;
-}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin: 1rem 0 1.5rem;
+    }
+    .checkbox-wrapper input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+        accent-color: #2ed573;
+        flex-shrink: 0;
+    }
+    .checkbox-wrapper label {
+        color: #b9c7d9;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 500;
+        margin: 0;
+        padding: 0;
+        line-height: 18px;
+        vertical-align: middle;
+    }
+    /* Pulsante di login centrato */
     .btn-login {
         display: block;
         width: fit-content;
@@ -119,6 +134,7 @@
         font-size: 1rem;
         padding: 0.75rem 1.5rem;
     }
+    /* Link per la registrazione */
     .register-link {
         text-align: center;
         margin-top: 1.8rem;
@@ -134,6 +150,7 @@
         color: #3ee684;
         text-decoration: underline;
     }
+    /* Messaggi di alert (errore/successo) */
     .alert {
         padding: 0.8rem 1rem;
         border-radius: 24px;

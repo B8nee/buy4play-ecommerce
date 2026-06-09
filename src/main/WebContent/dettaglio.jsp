@@ -1,21 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 <%@ page import="model.Prodotto" %>
+
 <%
+    // Recupera il prodotto passato dalla servlet DettaglioControl
     Prodotto p = (Prodotto) request.getAttribute("prodotto");
     if (p == null) {
+        // Se non esiste, reindirizza al catalogo
         response.sendRedirect("catalogo");
         return;
     }
 %>
+
+<!--
+    Pagina di dettaglio di un singolo prodotto.
+    Mostra immagine, nome, piattaforma, prezzo, descrizione generica,
+    badge "Popolare" (se presente) e pulsante per aggiungere al carrello.
+-->
+
 <div class="dettaglio-container">
     <div class="dettaglio-grid">
+        <!-- Colonna sinistra: immagine e badge -->
         <div class="dettaglio-img">
             <img src="<%= p.getImmagineUrl() %>" alt="<%= p.getNome() %>">
             <% if (p.isPopolare()) { %>
                 <div class="badge-popolare">🔥 Popolare</div>
             <% } %>
         </div>
+        <!-- Colonna destra: informazioni prodotto -->
         <div class="dettaglio-info">
             <h1 class="dettaglio-titolo"><%= p.getNome() %></h1>
             <div class="dettaglio-piattaforma"><%= p.getPiattaforma() %></div>
@@ -24,6 +36,7 @@
                 <p>Esperienza di gioco garantita con attivazione immediata.  
                    Acquista la chiave originale per <%= p.getPiattaforma() %>.</p>
             </div>
+            <!-- Pulsante AJAX per aggiungere al carrello -->
             <button id="addToCartBtn" class="btn add-to-cart" data-id="<%= p.getId() %>">🛒 Aggiungi al carrello</button>
             <div class="dettaglio-link">
                 <a href="catalogo">← Torna al catalogo</a>
@@ -33,6 +46,7 @@
 </div>
 
 <style>
+    /* Stili per la pagina di dettaglio: layout a due colonne responsive */
     .dettaglio-container {
         max-width: 1200px;
         margin: 2rem auto;
@@ -113,6 +127,7 @@
 </style>
 
 <script>
+    // Aggiunta al carrello tramite AJAX
     document.getElementById('addToCartBtn').addEventListener('click', function() {
         const productId = this.getAttribute('data-id');
         const originalText = this.innerHTML;
@@ -126,6 +141,7 @@
             if (data.success) {
                 this.innerHTML = '✓ Aggiunto!';
                 setTimeout(() => { this.innerHTML = originalText; }, 1500);
+                // Aggiorna il badge del carrello nell'header
                 if (typeof updateCartCount === 'function') updateCartCount();
             } else {
                 this.innerHTML = '❌ Errore';

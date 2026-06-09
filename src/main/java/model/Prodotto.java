@@ -1,16 +1,33 @@
 package model;
 
+/**
+ * JavaBean che rappresenta un prodotto (gioco) nel catalogo.
+ * Contiene le informazioni principali: ID, nome, piattaforma, prezzo,
+ * URL dell'immagine e un flag "popolare" per i prodotti in evidenza.
+ */
 public class Prodotto {
-    private int id;
-    private String nome;
-    private String piattaforma;
-    private double prezzo;
-    private String immagineUrl;
-    private boolean popolare;
+    private int id; // Identificativo univoco
+    private String nome; // Nome del gioco
+    private String piattaforma; // Piattaforma (PC, PS5, Xbox, ecc.)
+    private double prezzo; // Prezzo in Euro (IVA esclusa)
+    private String immagineUrl; // URL dell'immagine di copertina
+    private boolean popolare; // Indica se il prodotto è tra i più venduti/in evidenza
 
+    /**
+     * Costruttore vuoto (richiesto per i JavaBean).
+     */
     public Prodotto() {
     }
 
+    /**
+     * Costruttore con parametri principali (esclude il flag popolare).
+     * 
+     * @param id          ID del prodotto
+     * @param nome        Nome del gioco
+     * @param piattaforma Piattaforma
+     * @param prezzo      Prezzo
+     * @param immagineUrl URL dell'immagine
+     */
     public Prodotto(int id, String nome, String piattaforma, double prezzo, String immagineUrl) {
         this.id = id;
         this.nome = nome;
@@ -19,6 +36,7 @@ public class Prodotto {
         this.immagineUrl = immagineUrl;
     }
 
+    // ---------- Getter e Setter ----------
     public int getId() {
         return id;
     }
@@ -58,7 +76,7 @@ public class Prodotto {
     public void setImmagineUrl(String immagineUrl) {
         this.immagineUrl = immagineUrl;
     }
-    
+
     public boolean isPopolare() {
         return popolare;
     }

@@ -1,14 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="header.jsp" %>
 <%@ page import="model.Cart, model.CartItem, model.Prodotto" %>
+
 <%
+    // Recupera il carrello dalla sessione (se non esiste, ne crea uno nuovo)
     Cart cart = (Cart) session.getAttribute("cart");
     if (cart == null) cart = new Cart();
 %>
+
 <div class="cart-container">
     <h2>🛒 Il tuo carrello</h2>
 
     <% if (cart.isEmpty()) { %>
+        <!-- Carrello vuoto: mostra un messaggio accogliente e il link al catalogo -->
         <div class="cart-empty">
             <div class="empty-icon">🛒</div>
             <p>Il tuo carrello è vuoto</p>
@@ -16,6 +20,7 @@
             <a href="catalogo" class="btn">Continua gli acquisti</a>
         </div>
     <% } else { %>
+        <!-- Carrello con articoli: mostra la tabella riepilogativa -->
         <div class="cart-items">
             <table class="cart-table">
                 <thead>
@@ -29,6 +34,7 @@
                         <td><%= p.getNome() %></td>
                         <td class="cart-price" data-price="<%= p.getPrezzo() %>">&euro; <%= String.format("%.2f", p.getPrezzo()) %></td>
                         <td>
+                            <!-- Controlli di quantità (meno, valore, più) gestiti via AJAX -->
                             <div class="quantity-control">
                                 <button class="qty-btn minus" data-id="<%= p.getId() %>">-</button>
                                 <span id="qty-<%= p.getId() %>" class="qty-value"><%= item.getQuantita() %></span>
@@ -54,6 +60,7 @@
 </div>
 
 <style>
+    /* Stili per il contenitore del carrello, tabella, pulsanti e feedback */
     .cart-container {
         max-width: 1200px;
         margin: 2rem auto;
@@ -160,6 +167,7 @@
 </style>
 
 <script>
+    // Mostra un messaggio temporaneo (toast) per il feedback delle operazioni AJAX
     function showFeedback(message, isError = false) {
         let fb = document.getElementById('cart-feedback');
         if (!fb) {
@@ -175,6 +183,7 @@
         setTimeout(() => { fb.style.opacity = '0'; }, 2000);
     }
 
+    // Aggiorna il totale del carrello in base ai subtotali delle righe
     function updateTotal() {
         let subtotals = document.querySelectorAll('.cart-subtotal');
         let total = 0;
@@ -185,13 +194,15 @@
         document.getElementById('cart-total').innerHTML = '€ ' + total.toFixed(2);
     }
 
+    // Aggiorna l'interfaccia per un singolo prodotto (quantità e subtotale)
     function updateItemUI(productId, newQuantity, newSubtotal) {
         document.getElementById('qty-' + productId).innerText = newQuantity;
         document.getElementById('subtotal-' + productId).innerHTML = '€ ' + newSubtotal.toFixed(2);
         updateTotal();
-        if (typeof updateCartCount === 'function') updateCartCount();
+        if (typeof updateCartCount === 'function') updateCartCount(); // aggiorna il badge del carrello nell'header
     }
 
+    // Rimuove la riga del prodotto dalla tabella
     function removeItemUI(productId) {
         const row = document.getElementById('cart-item-' + productId);
         row.remove();
@@ -199,10 +210,11 @@
         if (typeof updateCartCount === 'function') updateCartCount();
         let tableBody = document.querySelector('.cart-table tbody');
         if (tableBody.children.length === 0) {
-            location.reload();
+            location.reload(); // se il carrello diventa vuoto, ricarica la pagina per mostrare il messaggio "carrello vuoto"
         }
     }
 
+    // Gestisce le richieste AJAX per aggiornare il carrello (update, remove, clear, add)
     function updateCart(action, productId, quantity) {
         let params = new URLSearchParams();
         params.append('action', action);
@@ -226,9 +238,9 @@
                     removeItemUI(productId);
                     showFeedback('Prodotto rimosso');
                 } else if (action === 'clear') {
-                    location.reload();
+                    location.reload(); // ricarica la pagina dopo lo svuotamento
                 } else if (action === 'add') {
-                    location.reload();
+                    location.reload(); // ricarica la pagina dopo l'aggiunta (per semplicità)
                 }
             } else {
                 showFeedback('Errore: ' + (data.message || 'operazione fallita'), true);
@@ -240,6 +252,7 @@
         });
     }
 
+    // Eventi per i pulsanti di decremento quantità
     document.querySelectorAll('.qty-btn.minus').forEach(btn => {
         btn.addEventListener('click', () => {
             let productId = btn.getAttribute('data-id');
@@ -247,11 +260,12 @@
             if (currentQty > 1) {
                 updateCart('update', productId, currentQty - 1);
             } else {
-                updateCart('remove', productId);
+                updateCart('remove', productId); // se quantità 1, cliccare sul meno equivale a rimuovere
             }
         });
     });
 
+    // Eventi per i pulsanti di incremento quantità
     document.querySelectorAll('.qty-btn.plus').forEach(btn => {
         btn.addEventListener('click', () => {
             let productId = btn.getAttribute('data-id');
@@ -260,6 +274,7 @@
         });
     });
 
+    // Eventi per i pulsanti di rimozione prodotto
     document.querySelectorAll('.btn-remove').forEach(btn => {
         btn.addEventListener('click', () => {
             let productId = btn.getAttribute('data-id');
@@ -269,6 +284,7 @@
         });
     });
 
+    // Evento per lo svuotamento completo del carrello
     const clearBtn = document.getElementById('clear-cart');
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {

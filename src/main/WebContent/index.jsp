@@ -2,6 +2,13 @@
 <%@ page import="java.util.List, model.Prodotto, model.ProdottoDAO" %>
 <%@ include file="header.jsp" %>
 
+<!-- 
+    Pagina principale (home) del sito.
+    Mostra una sezione hero, una griglia di prodotti "popolari" (primi 4 prodotti),
+    una sezione con i vantaggi e una con le categorie.
+-->
+
+<!-- Hero section: immagine di sfondo, titolo, descrizione e pulsante -->
 <div class="hero">
     <div class="hero-content">
         <h1>Benvenuto su <span class="gradient-text">Buy 4 Play</span></h1>
@@ -11,9 +18,11 @@
 </div>
 
 <%
+    // Recupera i primi 4 prodotti dal catalogo per la sezione "Giochi più popolari"
     List<Prodotto> popolari = null;
     try {
         ProdottoDAO dao = new ProdottoDAO();
+        // Parametri: offset=0, limit=4, nessun filtro piattaforma, nessun ordinamento
         popolari = dao.doRetrieveAll(0, 4, null, null);
     } catch (Exception e) {
         e.printStackTrace();
@@ -38,6 +47,7 @@
 </div>
 <% } %>
 
+<!-- Sezione dei vantaggi (perché scegliere Buy4Play) -->
 <div class="benefits-section">
     <div class="section-title">
         <h2>✨ Perché scegliere Buy4Play</h2>
@@ -61,6 +71,7 @@
     </div>
 </div>
 
+<!-- Sezione delle categorie (filtri per piattaforma) -->
 <div class="categories-section">
     <div class="section-title">
         <h2>🎮 Categorie</h2>
@@ -86,6 +97,7 @@
 </div>
 
 <style>
+    /* Stili specifici per la pagina home (hero, card, vantaggi, categorie) */
     .hero {
         background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://r4.wallpaperflare.com/wallpaper/162/894/557/colorful-neon-computer-keyboards-wallpaper-12e102d0cd167edb8ac8829560685912.jpg');
         background-size: cover;
@@ -114,6 +126,7 @@
         margin-left: auto;
         margin-right: auto;
     }
+    /* Sezioni generali */
     .featured-section, .benefits-section, .categories-section {
         max-width: 1200px;
         margin: 3rem auto;
@@ -129,6 +142,7 @@
         font-size: 2rem;
         margin: 0 auto;
     }
+    /* Griglia prodotti popolari (flex centrato) */
     .featured-grid {
         display: flex;
         flex-wrap: wrap;
@@ -170,6 +184,7 @@
         padding: 0.4rem 1rem;
         font-size: 0.8rem;
     }
+    /* Vantaggi */
     .benefits-grid {
         display: flex;
         justify-content: center;
@@ -197,6 +212,7 @@
         color: #b9c7d9;
         font-size: 0.9rem;
     }
+    /* Categorie */
     .categories-grid {
         display: flex;
         justify-content: center;
@@ -221,6 +237,7 @@
         color: #0a0c10;
         border-color: #2ed573;
     }
+    /* Responsive */
     @media (max-width: 768px) {
         .hero h1 {
             font-size: 2rem;

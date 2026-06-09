@@ -1,14 +1,25 @@
 package model;
 
+/**
+ * Modella la riga di dettaglio di un ordine.
+ * Per ogni prodotto acquistato, vengono memorizzati:
+ * - l'ID del prodotto (prodottoId),
+ * - la quantità,
+ * - il prezzo unitario al momento dell'acquisto (per storicità),
+ * - l'aliquota IVA applicata (per storicità).
+ * Inoltre, può contenere un riferimento all'oggetto Prodotto associato
+ * (opzionale).
+ */
 public class DettaglioOrdine {
-    private int id;
-    private int ordineId;
-    private int prodottoId;
-    private int quantita;
-    private double prezzoUnitario;
-    private double iva;
-    private Prodotto prodotto;
+    private int id; // Identificativo univoco della riga
+    private int ordineId; // ID dell'ordine a cui appartiene
+    private int prodottoId; // ID del prodotto acquistato
+    private int quantita; // Quantità acquistata
+    private double prezzoUnitario; // Prezzo del prodotto al momento dell'acquisto (IVA esclusa)
+    private double iva; // Aliquota IVA applicata (es. 22.0)
+    private Prodotto prodotto; // Riferimento all'oggetto Prodotto (caricato opzionalmente dal DAO)
 
+    // ----- Getter e Setter -----
     public int getId() {
         return id;
     }
