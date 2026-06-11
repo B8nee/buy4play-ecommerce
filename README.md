@@ -110,15 +110,66 @@ Il database si chiama `buy4play` e contiene le seguenti tabelle:
 
 1. **Clona il repository**
    ```bash
-   git clone https://github.com/tuo-username/buy4play-ecommerce.git
+   git clone https://github.com/B8nee/buy4play-ecommerce.git
    ```
 
 2. **Crea il database MySQL**
-   Esegui lo script SQL fornito (se presente) per creare il database e le tabelle.
+   Esegui lo script SQL fornito per creare il database e le tabelle.
    ```sql
-   CREATE DATABASE buy4play;
+   CREATE DATABASE IF NOT EXISTS buy4play;
    USE buy4play;
-   -- esegui le istruzioni CREATE TABLE, INSERT, ecc.
+
+   CREATE TABLE IF NOT EXISTS utente (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    cognome VARCHAR(50) NOT NULL,
+    indirizzo VARCHAR(200),
+    citta VARCHAR(50),
+    provincia VARCHAR(2),
+    cap VARCHAR(5),
+    password_hash VARCHAR(128) NOT NULL,
+    ruolo VARCHAR(20) DEFAULT 'cliente'
+   );
+
+   CREATE TABLE IF NOT EXISTS prodotto (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    piattaforma VARCHAR(50) NOT NULL,
+    prezzo DECIMAL(10,2) NOT NULL,
+    immagine_url VARCHAR(255),
+    popolare TINYINT(1) DEFAULT 0
+   );
+
+   CREATE TABLE IF NOT EXISTS ordine (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    utente_id INT NOT NULL,
+    data_ordine TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    totale DECIMAL(10,2) NOT NULL,
+    indirizzo_spedizione VARCHAR(200),
+    stato VARCHAR(20) DEFAULT 'in_lavorazione',
+    FOREIGN KEY (utente_id) REFERENCES utente(id) ON DELETE CASCADE
+   );
+
+   CREATE TABLE IF NOT EXISTS dettaglio_ordine (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ordine_id INT NOT NULL,
+    prodotto_id INT NOT NULL,
+    quantita INT NOT NULL,
+    prezzo_unitario DECIMAL(10,2) NOT NULL,
+    iva DECIMAL(5,2) NOT NULL,
+    FOREIGN KEY (ordine_id) REFERENCES ordine(id) ON DELETE CASCADE,
+    FOREIGN KEY (prodotto_id) REFERENCES prodotto(id) ON DELETE RESTRICT
+   );
+
+   CREATE TABLE IF NOT EXISTS remember_me (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    utente_id INT NOT NULL,
+    serie VARCHAR(64) UNIQUE NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    data_scadenza TIMESTAMP NOT NULL,
+    FOREIGN KEY (utente_id) REFERENCES utente(id) ON DELETE CASCADE
+   );
    ```
 
 3. **Configura il DataSource**
@@ -130,7 +181,7 @@ Il database si chiama `buy4play` e contiene le seguenti tabelle:
              driverClassName="com.mysql.cj.jdbc.Driver"
              url="jdbc:mysql://localhost:3306/buy4play?useSSL=false&amp;serverTimezone=Europe/Rome"
              username="root"
-             password="tua_password"
+             password="root_password"
              maxTotal="20"
              maxIdle="10" />
    ```
@@ -147,7 +198,7 @@ Il database si chiama `buy4play` e contiene le seguenti tabelle:
 
 6. **Avvia il server**
    - Aggiungi il progetto a Tomcat (Run on Server).
-   - L’applicazione sarà disponibile all’indirizzo: `http://localhost:8080/Buy4Play`
+   - L’applicazione sarà disponibile all’indirizzo: `http://localhost:80/Buy4Play`
 
 ### 🔐 Credenziali di accesso
 
