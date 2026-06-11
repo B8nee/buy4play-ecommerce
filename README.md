@@ -45,31 +45,32 @@ L’**amministratore** ha un’area riservata per:
 
 Buy4Play/
 ├── src/main/java/
-│   ├── control/ # Servlet (CatalogoControl, CarrelloControl, LoginControl, ...)
-│   ├── model/ # JavaBean (Prodotto, Utente, Ordine, Cart, ...) e DAO
-│   ├── filtri/ # AuthFilter, AdminFilter, RememberMeFilter
-│   └── utility/ # PasswordHasher, TokenGenerator
+│ ├── control/ # Servlet (CatalogoControl, CarrelloControl, LoginControl, ...)
+│ ├── model/ # JavaBean (Prodotto, Utente, Ordine, Cart, ...) e DAO
+│ ├── filtri/ # AuthFilter, AdminFilter, RememberMeFilter
+│ └── utility/ # PasswordHasher, TokenGenerator
 ├── WebContent/
-│   ├── admin/ # JSP dell’area amministrativa
-│   ├── error/ # Pagine di errore personalizzate (404, 500, generica)
-│   ├── META-INF/ # context.xml (configurazione DataSource)
-│   ├── WEB-INF/ # web.xml e librerie (.jar)
-│   ├── header.jsp # Header comune (include navbar, ricerca, badge carrello)
-│   ├── footer.jsp # Footer con social, newsletter simulata
-│   ├── index.jsp # Home page
-│   ├── catalogo.jsp # Catalogo prodotti con filtri e paginazione
-│   ├── carrello.jsp # Riepilogo carrello (AJAX per modifiche)
-│   ├── dettaglio.jsp # Dettaglio prodotto
-│   ├── ordini.jsp # Lista ordini utente (con filtro mese/anno)
-│   ├── dettaglioOrdine.jsp # Dettaglio ordine e link per scaricare PDF
-│   ├── profilo.jsp # Modifica profilo utente
-│   ├── login.jsp # Form di accesso
-│   ├── registrazione.jsp # Registrazione con controllo email AJAX
-│   ├── cambioPassword.jsp
-│   ├── contattaci.jsp # Modulo di contatto (simulazione)
-│   ├── faq.jsp # Domande frequenti
-│   ├── privacy.jsp # Informativa privacy
-│   └── termini.jsp # Termini e condizioni
+│ ├── admin/ # JSP dell’area amministrativa
+│ ├── error/ # Pagine di errore personalizzate (404, 500, generica)
+│ ├── META-INF/ # context.xml (configurazione DataSource)
+│ ├── WEB-INF/ # web.xml e librerie (.jar)
+│ ├── header.jsp # Header comune (include navbar, ricerca, badge carrello)
+│ ├── footer.jsp # Footer con social, newsletter simulata
+│ ├── index.jsp # Home page
+│ ├── catalogo.jsp # Catalogo prodotti con filtri e paginazione
+│ ├── carrello.jsp # Riepilogo carrello (AJAX per modifiche)
+│ ├── dettaglio.jsp # Dettaglio prodotto
+│ ├── ordini.jsp # Lista ordini utente (con filtro mese/anno)
+│ ├── dettaglioOrdine.jsp # Dettaglio ordine e link per scaricare PDF
+│ ├── profilo.jsp # Modifica profilo utente
+│ ├── login.jsp # Form di accesso
+│ ├── registrazione.jsp # Registrazione con controllo email AJAX
+│ ├── cambioPassword.jsp
+│ ├── contattaci.jsp # Modulo di contatto (simulazione)
+│ ├── faq.jsp # Domande frequenti
+│ ├── privacy.jsp # Informativa privacy
+│ └── termini.jsp # Termini e condizioni
+└── README.md
 
 ---
 
