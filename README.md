@@ -43,6 +43,7 @@ L’**amministratore** ha un’area riservata per:
 
 ## 📁 Struttura del progetto
 
+```text
 Buy4Play/
 ├── src/main/java/
 │ ├── control/ # Servlet (CatalogoControl, CarrelloControl, LoginControl, ...)
@@ -71,6 +72,7 @@ Buy4Play/
 │ ├── privacy.jsp # Informativa privacy
 │ └── termini.jsp # Termini e condizioni
 └── README.md
+```
 
 ---
 
