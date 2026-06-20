@@ -1,15 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="it">
 
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Buy 4 Play</title>
         <link rel="icon" type="image/x-icon" href="<%= request.getContextPath() %>/favicon.ico">
         <style>
             /* ========== STILI GLOBALI ========== */
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+            
             * {
                 margin: 0;
                 padding: 0;
@@ -25,8 +26,6 @@
                 flex-direction: column;
                 min-height: 100vh;          /* Assicura che il footer resti in basso */
             }
-
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
             /* Contenitore principale flessibile per spingere il footer in basso */
             .container {

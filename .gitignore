@@ -35,3 +35,6 @@ logs/
 # File sensibili (password, configurazioni locali)
 db.properties
 context.xml
+
+# Altro
+.obsidian/
